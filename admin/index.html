@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <title>ניהול הגשות - לזכרו של אבא</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+    <nav class="nav-glass sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center gap-4">
+            <a href="/" class="text-2xl font-bold text-stone-800 hover:text-amber-700 transition-colors">לזכרו של אבא</a>
+            <div class="flex items-center gap-4">
+                <span id="user-email" class="text-stone-600 text-sm hidden sm:inline"></span>
+                <button id="logout-btn" class="text-amber-700 hover:text-amber-900 font-medium">התנתקות</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-6xl mx-auto py-12 px-6 w-full">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-800 mb-3">ניהול הגשות</h1>
+            <p class="text-stone-500 text-lg">כל מה שנשלח ממתין לאישור שלך לפני שיופיע באתר</p>
+        </header>
+
+        <div class="flex justify-center gap-3 mb-10 flex-wrap">
+            <button data-tab="recipe" class="tab-btn px-6 py-3 rounded-full bg-amber-600 text-white font-medium shadow">מתכונים</button>
+            <button data-tab="guestbook" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">זיכרונות</button>
+            <button data-tab="media" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">תמונות וסרטונים</button>
+            <button data-tab="restaurant" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">מסעדות</button>
+            <button data-tab="approved" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">מאושרים</button>
+        </div>
+
+        <section id="content" class="space-y-6">
+            <p class="text-center text-stone-400">טוען...</p>
+        </section>
+    </main>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/50" id="edit-modal-backdrop"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative">
+                <button id="edit-modal-close" class="absolute top-4 left-4 text-stone-400 hover:text-stone-700 text-2xl">&times;</button>
+                <h2 class="text-2xl font-bold text-stone-800 mb-6">עריכת תוכן</h2>
+                <form id="edit-form" class="space-y-4">
+                    <div id="edit-fields"></div>
+                    <div class="flex gap-3 pt-4">
+                        <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-full font-medium transition">שמירה</button>
+                        <button type="button" id="edit-cancel" class="bg-stone-200 hover:bg-stone-300 text-stone-700 px-8 py-3 rounded-full font-medium transition">ביטול</button>
+                    </div>
+                    <p id="edit-status" class="text-sm"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] pointer-events-none transition-all duration-300 translate-y-4 opacity-0">
+        <div class="px-6 py-3 rounded-full shadow-lg font-medium text-sm pointer-events-auto"></div>
+    </div>
+
+    <script type="module">
+        import { getUser, logout } from 'https://esm.sh/@netlify/identity@1';
+
+        (async () => {
+            const content = document.getElementById('content');
+
+            const user = await getUser();
+            if (!user || !(user.roles || []).includes('admin')) {
+                content.innerHTML = '<p class="text-center text-stone-400">מעביר לדף כניסה...</p>';
+                window.location.replace('/admin-login.html');
+                return;
+            }
+
+            document.getElementById('user-email').textContent = user.email || '';
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                try { await logout(); } catch {}
+                window.location.href = '/';
+            });
+
+            const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            const nl2br = (s) => esc(s).replace(/\n/g, '<br>');
+
+            function showToast(text, ok) {
+                const el = document.getElementById('toast');
+                const inner = el.firstElementChild;
+                inner.textContent = text;
+                inner.className = 'px-6 py-3 rounded-full shadow-lg font-medium text-sm ' + (ok !== false ? 'bg-green-600 text-white' : 'bg-red-500 text-white');
+                el.classList.remove('translate-y-4', 'opacity-0');
+                clearTimeout(el._t);
+                el._t = setTimeout(() => el.classList.add('translate-y-4', 'opacity-0'), 2500);
+            }
+
+            async function apiFetch(url, opts) {
+                opts = opts || {};
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 15000);
+                try {
+                    const res = await fetch(url, {
+                        ...opts,
+                        signal: ctrl.signal,
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+                    });
+                    if (res.status === 401 || res.status === 403) {
+                        window.location.replace('/admin-login.html');
+                        return null;
+                    }
+                    return res;
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+
+            let currentTab = 'recipe';
+
+            function mediaGrid(media) {
+                if (!media || !media.length) return '';
+                return '<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">' + media.map(function (m) {
+                    const src = '/api/media/' + encodeURI(m.key);
+                    if (m.type && m.type.startsWith('video/')) {
+                        return '<video controls class="rounded-xl w-full h-40 object-cover bg-stone-100"><source src="' + src + '" type="' + esc(m.type) + '"></video>';
+                    }
+                    return '<img src="' + src + '" alt="' + esc(m.name || '') + '" class="rounded-xl w-full h-40 object-cover">';
+                }).join('') + '</div>';
+            }
+
+            function renderLinks(arr) {
+                var valid = (arr || []).filter(function (l) { return l.url; });
+                if (!valid.length) return '';
+                return '<div class="flex flex-wrap gap-2 mt-3">' + valid.map(function (l) {
+                    return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium transition border border-amber-200">' +
+                        '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>' +
+                        esc(l.title || l.url.replace(/^https?:\/\//, '').slice(0, 40)) +
+                        '</a>';
+                }).join('') + '</div>';
+            }
+
+            function actionBtns(type, id, isApproved) {
+                var html = '<div class="flex gap-2 flex-shrink-0 flex-wrap">';
+                html += '<button data-act="edit" data-type="' + esc(type) + '" data-id="' + esc(id) + '" data-status="' + (isApproved ? 'approved' : 'pending') + '" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium transition">עריכה</button>';
+                if (!isApproved) {
+                    html += '<button data-act="approve" data-type="' + esc(type) + '" data-id="' + esc(id) + '" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full text-sm font-medium transition">אישור</button>';
+                }
+                html += '<button data-act="reject" data-status="' + (isApproved ? 'approved' : 'pending') + '" data-type="' + esc(type) + '" data-id="' + esc(id) + '" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full text-sm font-medium transition">' + (isApproved ? 'מחיקה' : 'דחייה') + '</button>';
+                html += '</div>';
+                return html;
+            }
+
+            function renderCard(kind, item, isApproved) {
+                var date = new Date(item.submittedAt).toLocaleString('he-IL');
+
+                if (kind === 'recipe') {
+                    return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                        '<div class="flex justify-between items-start gap-4 mb-3">' +
+                            '<div class="min-w-0">' +
+                                '<h3 class="text-2xl font-bold text-stone-800">' + esc(item.title) + '</h3>' +
+                                '<p class="text-amber-700">מאת ' + esc(item.submitter || 'אנונימי') + ' &bull; ' + date + '</p>' +
+                            '</div>' +
+                            actionBtns('recipe', item.id, isApproved) +
+                        '</div>' +
+                        '<div class="text-stone-700 leading-relaxed whitespace-pre-line bg-stone-50 p-4 rounded-2xl border border-stone-100">' + nl2br(item.content) + '</div>' +
+                        mediaGrid(item.media) +
+                        (isApproved ? '<div class="mt-4 comments-section" data-comments-type="recipe" data-comments-id="' + esc(item.id) + '"><p class="text-stone-400 text-sm">טוען תגובות...</p></div>' : '') +
+                    '</article>';
+                }
+
+                if (kind === 'guestbook') {
+                    return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                        '<div class="flex justify-between items-start gap-4 mb-3">' +
+                            '<div class="min-w-0">' +
+                                '<h3 class="text-xl font-bold text-stone-800">' + esc(item.name) + (item.relation ? ' <span class="text-stone-400 font-normal">&mdash; ' + esc(item.relation) + '</span>' : '') + '</h3>' +
+                                '<p class="text-amber-700 text-sm">' + date + '</p>' +
+                            '</div>' +
+                            actionBtns('guestbook', item.id, isApproved) +
+                        '</div>' +
+                        '<div class="text-stone-700 leading-relaxed whitespace-pre-line bg-stone-50 p-4 rounded-2xl border border-stone-100">' + nl2br(item.message) + '</div>' +
+                        renderLinks(item.links) +
+                        (isApproved ? '<div class="mt-4 comments-section" data-comments-type="guestbook" data-comments-id="' + esc(item.id) + '"><p class="text-stone-400 text-sm">טוען תגובות...</p></div>' : '') +
+                    '</article>';
+                }
+
+                if (kind === 'restaurant') {
+                    return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                        '<div class="flex justify-between items-start gap-4 mb-3">' +
+                            '<div class="min-w-0">' +
+                                '<h3 class="text-2xl font-bold text-stone-800">' + esc(item.restaurantName) + '</h3>' +
+                                '<p class="text-amber-700">' + esc(item.city) + ', ' + esc(item.country) + ' &bull; מאת ' + esc(item.submitter || 'אנונימי') + ' &bull; ' + date + '</p>' +
+                            '</div>' +
+                            actionBtns('restaurant', item.id, isApproved) +
+                        '</div>' +
+                        (item.location ? '<p class="text-stone-600 text-sm mb-2">מיקום: ' + esc(item.location) + '</p>' : '') +
+                        (item.link ? '<a href="' + esc(item.link) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium transition border border-amber-200 mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg> קישור</a>' : '') +
+                        (item.dish ? '<div class="bg-stone-50 p-4 rounded-2xl border border-stone-100"><p class="font-bold text-stone-800">מנה מומלצת: ' + esc(item.dish) + '</p>' + (item.dishDescription ? '<p class="text-stone-600 text-sm mt-1">' + esc(item.dishDescription) + '</p>' : '') + '</div>' : '') +
+                    '</article>';
+                }
+
+                return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                    '<div class="flex justify-between items-start gap-4 mb-3">' +
+                        '<div class="min-w-0">' +
+                            '<h3 class="text-xl font-bold text-stone-800">העלאה מאת ' + esc(item.submitter || 'אנונימי') + '</h3>' +
+                            '<p class="text-amber-700 text-sm">' + date + '</p>' +
+                        '</div>' +
+                        actionBtns('media', item.id, isApproved) +
+                    '</div>' +
+                    (item.caption ? '<div class="text-stone-700 leading-relaxed whitespace-pre-line bg-stone-50 p-4 rounded-2xl border border-stone-100 mb-3">' + nl2br(item.caption) + '</div>' : '') +
+                    mediaGrid(item.media) +
+                    (isApproved ? '<div class="mt-4 comments-section" data-comments-type="media" data-comments-id="' + esc(item.id) + '"><p class="text-stone-400 text-sm">טוען תגובות...</p></div>' : '') +
+                '</article>';
+            }
+
+            // --- Comments in admin ---
+            async function loadAdminComments() {
+                const sections = document.querySelectorAll('.comments-section');
+                for (const section of sections) {
+                    const type = section.dataset.commentsType;
+                    const id = section.dataset.commentsId;
+                    try {
+                        const res = await apiFetch('/api/list-comments?targetType=' + type + '&targetId=' + id);
+                        if (!res || !res.ok) { section.innerHTML = ''; continue; }
+                        const { items } = await res.json();
+                        if (!items || !items.length) { section.innerHTML = '<p class="text-stone-400 text-xs">אין תגובות</p>'; continue; }
+                        section.innerHTML = '<p class="text-stone-500 text-xs font-medium mb-2">תגובות (' + items.length + '):</p>' +
+                            items.map(c =>
+                                '<div class="flex items-start justify-between gap-2 bg-stone-50 rounded-xl px-3 py-2 border border-stone-100">' +
+                                    '<div class="min-w-0"><p class="text-stone-700 text-sm">' + esc(c.text) + '</p><p class="text-stone-400 text-xs">— ' + esc(c.name) + '</p></div>' +
+                                    '<button data-act="delete-comment" data-target-type="' + esc(type) + '" data-target-id="' + esc(id) + '" data-comment-id="' + esc(c.id) + '" class="text-red-400 hover:text-red-600 text-xs font-medium flex-shrink-0 mt-1">מחיקה</button>' +
+                                '</div>'
+                            ).join('');
+                    } catch { section.innerHTML = ''; }
+                }
+            }
+
+            // --- Edit modal ---
+            const editModal = document.getElementById('edit-modal');
+            const editFields = document.getElementById('edit-fields');
+            const editForm = document.getElementById('edit-form');
+            const editStatus = document.getElementById('edit-status');
+            let editContext = null;
+
+            function openEditModal(type, id, status, item) {
+                editContext = { type, id, status };
+                editStatus.textContent = '';
+                let html = '';
+
+                function field(label, name, value, tag, extra) {
+                    tag = tag || 'input';
+                    extra = extra || '';
+                    if (tag === 'textarea') {
+                        return '<div><label class="block text-stone-700 font-medium mb-1 text-sm">' + label + '</label><textarea name="' + name + '" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm" rows="4" ' + extra + '>' + esc(value || '') + '</textarea></div>';
+                    }
+                    return '<div><label class="block text-stone-700 font-medium mb-1 text-sm">' + label + '</label><input name="' + name + '" value="' + esc(value || '') + '" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm" ' + extra + '></div>';
+                }
+
+                if (type === 'recipe') {
+                    html = field('שם המתכון', 'title', item.title) +
+                           field('מאת', 'submitter', item.submitter) +
+                           field('המתכון', 'content', item.content, 'textarea');
+                } else if (type === 'guestbook') {
+                    html = field('שם', 'name', item.name) +
+                           field('קשר', 'relation', item.relation) +
+                           field('ההודעה', 'message', item.message, 'textarea');
+                } else if (type === 'media') {
+                    html = field('מאת', 'submitter', item.submitter) +
+                           field('כיתוב', 'caption', item.caption, 'textarea');
+                } else if (type === 'restaurant') {
+                    html = field('שם המסעדה', 'restaurantName', item.restaurantName) +
+                           '<div class="grid grid-cols-2 gap-3">' +
+                           field('ארץ', 'country', item.country) +
+                           field('עיר', 'city', item.city) +
+                           '</div>' +
+                           field('מיקום', 'location', item.location) +
+                           field('קישור', 'link', item.link, 'input', 'type="url" dir="ltr"') +
+                           field('מנה מומלצת', 'dish', item.dish) +
+                           field('על המנה', 'dishDescription', item.dishDescription, 'textarea') +
+                           field('מאת', 'submitter', item.submitter);
+                }
+
+                editFields.innerHTML = html;
+                editModal.classList.remove('hidden');
+            }
+
+            function closeEditModal() {
+                editModal.classList.add('hidden');
+                editContext = null;
+            }
+
+            document.getElementById('edit-modal-backdrop').addEventListener('click', closeEditModal);
+            document.getElementById('edit-modal-close').addEventListener('click', closeEditModal);
+            document.getElementById('edit-cancel').addEventListener('click', closeEditModal);
+
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!editContext) return;
+                const fd = new FormData(editForm);
+                const fields = {};
+                for (const [k, v] of fd.entries()) { fields[k] = v; }
+                editStatus.textContent = 'שומר...';
+                editStatus.className = 'text-sm text-stone-600';
+                try {
+                    const res = await apiFetch('/api/admin/edit', {
+                        method: 'POST',
+                        body: JSON.stringify({ type: editContext.type, id: editContext.id, status: editContext.status, fields }),
+                    });
+                    if (!res || !res.ok) throw new Error('שגיאה');
+                    showToast('נערך בהצלחה');
+                    closeEditModal();
+                    load();
+                } catch (err) {
+                    editStatus.textContent = err.message || 'שגיאה';
+                    editStatus.className = 'text-sm text-red-600';
+                }
+            });
+
+            // --- Store items for edit access ---
+            let loadedItems = {};
+
+            async function load() {
+                content.innerHTML = '<p class="text-center text-stone-400">טוען...</p>';
+                loadedItems = {};
+
+                try {
+                    if (currentTab === 'approved') {
+                        var safeJson = function (r) {
+                            return r && r.ok ? r.json() : Promise.resolve({ items: [] });
+                        };
+                        var results = await Promise.all([
+                            apiFetch('/api/list-approved?type=recipe').then(safeJson),
+                            apiFetch('/api/list-approved?type=guestbook').then(safeJson),
+                            apiFetch('/api/list-approved?type=media').then(safeJson),
+                            apiFetch('/api/list-approved?type=restaurant').then(safeJson),
+                        ]);
+                        var all = []
+                            .concat((results[0].items || []).map(function (i) { loadedItems[i.id] = i; return { kind: 'recipe', item: i }; }))
+                            .concat((results[1].items || []).map(function (i) { loadedItems[i.id] = i; return { kind: 'guestbook', item: i }; }))
+                            .concat((results[2].items || []).map(function (i) { loadedItems[i.id] = i; return { kind: 'media', item: i }; }))
+                            .concat((results[3].items || []).map(function (i) { loadedItems[i.id] = i; return { kind: 'restaurant', item: i }; }))
+                            .sort(function (a, b) { return (b.item.approvedAt || '').localeCompare(a.item.approvedAt || ''); });
+
+                        if (!all.length) {
+                            content.innerHTML = '<p class="text-center text-stone-400">אין עדיין הגשות מאושרות.</p>';
+                            return;
+                        }
+                        content.innerHTML = all.map(function (entry) {
+                            return renderCard(entry.kind, entry.item, true);
+                        }).join('');
+                        loadAdminComments();
+                    } else {
+                        var res = await apiFetch('/api/admin/list-pending?type=' + currentTab);
+                        if (!res) return;
+                        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+                        var data = await res.json();
+                        var items = data.items || [];
+                        items.forEach(function (i) { loadedItems[i.id] = i; });
+
+                        if (!items.length) {
+                            content.innerHTML = '<p class="text-center text-stone-400">אין הגשות ממתינות</p>';
+                            return;
+                        }
+                        content.innerHTML = items.map(function (item) {
+                            return renderCard(currentTab, item, false);
+                        }).join('');
+                    }
+                } catch (e) {
+                    var msg = e.name === 'AbortError'
+                        ? 'הבקשה לשרת נתקעה (timeout). בדקו את החיבור לאינטרנט ונסו שוב.'
+                        : 'שגיאה בטעינה (' + (e.message || 'לא ידוע') + ').';
+                    content.innerHTML = '<div class="text-center py-4"><p class="text-red-600 mb-3">' + msg + '</p><button id="retry-btn" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-full font-medium transition">נסה שוב</button></div>';
+                    document.getElementById('retry-btn').addEventListener('click', load);
+                }
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    currentTab = btn.dataset.tab;
+                    document.querySelectorAll('.tab-btn').forEach(function (b) {
+                        var isActive = b === btn;
+                        b.classList.toggle('bg-amber-600', isActive);
+                        b.classList.toggle('text-white', isActive);
+                        b.classList.toggle('bg-white', !isActive);
+                        b.classList.toggle('text-stone-700', !isActive);
+                    });
+                    load();
+                });
+            });
+
+            content.addEventListener('click', async function (e) {
+                // Delete comment
+                var delBtn = e.target.closest('button[data-act="delete-comment"]');
+                if (delBtn) {
+                    if (!confirm('למחוק את התגובה?')) return;
+                    delBtn.disabled = true;
+                    delBtn.textContent = '...';
+                    try {
+                        var res = await apiFetch('/api/admin/delete-comment', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                targetType: delBtn.dataset.targetType,
+                                targetId: delBtn.dataset.targetId,
+                                commentId: delBtn.dataset.commentId,
+                            }),
+                        });
+                        if (!res || !res.ok) throw new Error('שגיאה');
+                        showToast('תגובה נמחקה');
+                        load();
+                    } catch (err) {
+                        showToast(err.message || 'שגיאה', false);
+                        delBtn.disabled = false;
+                        delBtn.textContent = 'מחיקה';
+                    }
+                    return;
+                }
+
+                var btn = e.target.closest('button[data-act]');
+                if (!btn) return;
+                var act = btn.dataset.act;
+                var type = btn.dataset.type;
+                var id = btn.dataset.id;
+                var status = btn.dataset.status || 'pending';
+
+                // Edit
+                if (act === 'edit') {
+                    var item = loadedItems[id];
+                    if (item) openEditModal(type, id, status, item);
+                    return;
+                }
+
+                var confirmMsg = act === 'approve' ? 'לאשר את ההגשה?' : 'למחוק לצמיתות?';
+                if (!confirm(confirmMsg)) return;
+
+                var origText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = '...';
+
+                try {
+                    var url = act === 'approve' ? '/api/admin/approve' : '/api/admin/reject';
+                    var body = act === 'approve' ? { type: type, id: id } : { type: type, id: id, status: status };
+                    var res = await apiFetch(url, { method: 'POST', body: JSON.stringify(body) });
+                    if (!res) return;
+                    if (!res.ok) throw new Error('שגיאה');
+                    showToast(act === 'approve' ? 'אושר בהצלחה' : 'נמחק בהצלחה');
+                    load();
+                } catch (err) {
+                    showToast(err.message || 'שגיאה', false);
+                    btn.disabled = false;
+                    btn.textContent = origText;
+                }
+            });
+
+            load();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <script>
+        (function () {
+            var h = location.hash;
+            if (h && /(?:^|[#&])(recovery_token|invite_token|confirmation_token|email_change_token|access_token|error_description)=/.test(h)) {
+                location.replace('/admin-login.html' + h);
+            }
+        })();
+    </script>
+    <title>סרטונים - לזכרו של אבא</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/lightbox.js" defer></script>
+</head>
+<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+
+    <!-- סרגל ניווט -->
+    <nav class="nav-glass sticky top-0 z-50 transition-all">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-amber-700 transition-colors">
+                לזכרו של אבא
+            </a>
+            <div class="flex gap-4 md:gap-8 flex-wrap justify-center">
+                <a href="/gallery" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">גלריה</a>
+                <a href="/recipes" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">מתכונים</a>
+                <a href="/videos" class="text-lg text-amber-600 transition-colors font-bold border-b-2 border-amber-600 pb-1">סרטונים</a>
+                <a href="/guestbook" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">זיכרונות</a>
+                <a href="/restaurants" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">המלצות מסעדות</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- תוכן הדף -->
+    <div class="flex-grow">
+        <main class="max-w-5xl mx-auto py-16 px-6">
+            <header class="text-center mb-16">
+                <h1 class="text-5xl md:text-6xl font-bold text-stone-800 mb-4">סרטונים ורגעים</h1>
+                <p class="text-2xl text-stone-500">סרטונים שאושרו על ידי המשפחה</p>
+            </header>
+
+            <div id="approved-videos" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <p class="col-span-full text-center text-stone-400 text-lg">טוען סרטונים…</p>
+            </div>
+
+            <!-- טופס העלאת סרטונים -->
+            <section class="mt-20">
+                <div class="bg-white p-10 md:p-14 rounded-[2rem] border-4 border-white shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50"></div>
+                    <div class="relative z-10">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-3 text-stone-800">תרצו לשתף סרטון?</h2>
+                        <p class="text-stone-600 text-lg mb-8">תוכלו להעלות סרטונים מאבא. <strong>כל ההגשות מופיעות באתר רק לאחר אישור המשפחה.</strong></p>
+
+                        <form id="video-form" class="space-y-5" enctype="multipart/form-data">
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">השם שלכם</label>
+                                <input name="submitter" maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="איך לקרוא לכם">
+                            </div>
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">כיתוב לסרטונים</label>
+                                <textarea name="caption" maxlength="500" rows="3" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition resize-y" placeholder="זיכרון, מקום, תאריך…"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">סרטונים (עד 25MB לכל קובץ) *</label>
+                                <input name="files" type="file" accept="video/*" multiple required class="w-full text-stone-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200">
+                            </div>
+                            <div id="upload-progress-wrap" class="hidden">
+                                <div class="w-full bg-stone-200 rounded-full h-3 overflow-hidden">
+                                    <div id="upload-progress-bar" class="bg-amber-500 h-3 rounded-full transition-all duration-300" style="width:0%"></div>
+                                </div>
+                                <p id="upload-progress-text" class="text-sm text-stone-500 mt-1"></p>
+                            </div>
+                            <div class="flex items-center gap-4 pt-2">
+                                <button type="submit" id="video-submit" class="bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                                    שליחה לאישור
+                                </button>
+                                <span id="video-status" class="text-stone-600"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="py-10 text-center text-stone-500 bg-white/80 backdrop-blur border-t border-stone-200 mt-12">
+        <p class="text-lg">מונצח באהבה על ידי המשפחה 🤍</p>
+    </footer>
+
+    <script>
+        const escapeHtml = (str) => String(str ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        function fetchWithTimeout(url, options, ms) {
+            ms = ms || 12000;
+            options = options || {};
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), ms);
+            return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+                .finally(() => clearTimeout(timer));
+        }
+
+        async function loadApprovedVideos() {
+            const container = document.getElementById('approved-videos');
+            try {
+                const res = await fetchWithTimeout('/api/list-approved?type=media');
+                if (!res.ok) throw new Error('failed');
+                const { items } = await res.json();
+                const videos = [];
+                for (const item of items || []) {
+                    for (const m of (item.media || [])) {
+                        if (m.kind === 'video' || (m.type && m.type.startsWith('video/'))) {
+                            videos.push({ media: m, submitter: item.submitter, caption: item.caption });
+                        }
+                    }
+                }
+                if (!videos.length) {
+                    container.innerHTML = '<p class="col-span-full text-center text-stone-400 text-lg">עדיין אין סרטונים מהקהילה.</p>';
+                    return;
+                }
+                container.innerHTML = videos.map(({ media, submitter, caption }) => `
+                    <div class="rounded-2xl overflow-hidden shadow-lg hover-card border-4 border-white bg-white">
+                        <video controls class="w-full bg-stone-900">
+                            <source src="/api/media/${encodeURI(media.key)}" type="${escapeHtml(media.type || 'video/mp4')}">
+                        </video>
+                        ${(submitter || caption) ? `<div class="p-4 text-sm text-stone-600">${caption ? `<p class="mb-1">${escapeHtml(caption)}</p>` : ''}${submitter ? `<p class="text-amber-700 font-medium">— ${escapeHtml(submitter)}</p>` : ''}</div>` : ''}
+                    </div>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = '<p class="col-span-full text-center text-stone-400 text-lg">לא ניתן לטעון סרטונים כרגע.</p>';
+            }
+        }
+
+        const CHUNK_SIZE = 4 * 1024 * 1024;
+
+        function makeUploadId() {
+            return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+        }
+
+        async function uploadFileChunked(file, onProgress) {
+            const uploadId = makeUploadId();
+            const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+            for (let i = 0; i < totalChunks; i++) {
+                const start = i * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, file.size);
+                const chunk = file.slice(start, end);
+
+                const res = await fetch('/api/upload-chunk', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/octet-stream',
+                        'x-upload-id': uploadId,
+                        'x-chunk-index': String(i),
+                    },
+                    body: chunk,
+                });
+                if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error(data.error || 'שגיאה בהעלאת חלק מהקובץ');
+                }
+                if (onProgress) onProgress(i + 1, totalChunks);
+            }
+
+            return { uploadId, chunks: totalChunks, name: file.name, type: file.type, size: file.size };
+        }
+
+        document.getElementById('video-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const status = document.getElementById('video-status');
+            const button = document.getElementById('video-submit');
+            const progressWrap = document.getElementById('upload-progress-wrap');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progressText = document.getElementById('upload-progress-text');
+
+            const fileInput = form.querySelector('input[name="files"]');
+            const files = Array.from(fileInput.files || []);
+            if (!files.length) return;
+
+            status.textContent = '';
+            status.className = 'text-stone-600';
+            button.disabled = true;
+            progressWrap.classList.remove('hidden');
+            progressBar.style.width = '0%';
+
+            try {
+                const totalParts = files.reduce((s, f) => s + Math.ceil(f.size / CHUNK_SIZE), 0);
+                let completedParts = 0;
+                const fileDescriptors = [];
+
+                for (let fi = 0; fi < files.length; fi++) {
+                    const file = files[fi];
+                    if (file.size > 25 * 1024 * 1024) {
+                        throw new Error('הקובץ ' + file.name + ' גדול מדי. מקסימום 25MB');
+                    }
+                    progressText.textContent = 'מעלה קובץ ' + (fi + 1) + ' מתוך ' + files.length + '…';
+
+                    const desc = await uploadFileChunked(file, (done) => {
+                        completedParts++;
+                        const pct = Math.round((completedParts / totalParts) * 90);
+                        progressBar.style.width = pct + '%';
+                    });
+                    fileDescriptors.push(desc);
+                }
+
+                progressText.textContent = 'שומר…';
+                progressBar.style.width = '95%';
+
+                const res = await fetch('/api/submit-media', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        submitter: form.querySelector('input[name="submitter"]').value,
+                        caption: form.querySelector('textarea[name="caption"]').value,
+                        files: fileDescriptors,
+                    }),
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'שגיאה בשליחה');
+
+                progressBar.style.width = '100%';
+                status.textContent = 'תודה! הסרטונים נשלחו לאישור 🤍';
+                status.className = 'text-green-700 font-medium';
+                form.reset();
+                setTimeout(() => { progressWrap.classList.add('hidden'); }, 2000);
+            } catch (err) {
+                status.textContent = err.message || 'שגיאה בשליחה';
+                status.className = 'text-red-600';
+                progressWrap.classList.add('hidden');
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        loadApprovedVideos();
+    </script>
+
+</body>
+</html>

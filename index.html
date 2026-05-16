@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <script>
+        (function () {
+            var h = location.hash;
+            if (h && /(?:^|[#&])(recovery_token|invite_token|confirmation_token|email_change_token|access_token|error_description)=/.test(h)) {
+                location.replace('/admin-login.html' + h);
+            }
+        })();
+    </script>
+    <title>לזכרו של אבא</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/lightbox.js" defer></script>
+</head>
+<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+
+    <!-- סרגל ניווט -->
+    <nav class="nav-glass sticky top-0 z-50 transition-all">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-amber-700 transition-colors">
+                לזכרו של אבא
+            </a>
+            <div class="flex gap-4 md:gap-8 flex-wrap justify-center">
+                <a href="/gallery" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">גלריה</a>
+                <a href="/recipes" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">מתכונים</a>
+                <a href="/videos" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">סרטונים</a>
+                <a href="/guestbook" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">זיכרונות</a>
+                <a href="/restaurants" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">המלצות מסעדות</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- תוכן הדף -->
+    <div class="flex-grow">
+        <main class="max-w-5xl mx-auto px-4 py-16">
+            
+            <!-- תמונה מרכזית גדולה -->
+            <div class="mb-16 relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-amber-200 to-stone-300 rounded-[2rem] blur opacity-40 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                <img src="/father-smile.jpg" alt="אבא עם המשפחה" class="relative w-full h-auto rounded-[2rem] shadow-2xl border-8 border-white object-cover max-h-[70vh]">
+            </div>
+
+            <!-- כותרת וטקסט הסבר -->
+            <article class="text-center bg-white/80 backdrop-blur p-8 md:p-16 rounded-[2rem] shadow-xl border border-white hover-card relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50"></div>
+
+                <h1 class="text-5xl md:text-6xl font-bold text-stone-800 mb-6 relative z-10">לזכרו של אבא</h1>
+                <p class="text-2xl md:text-3xl text-amber-700 italic mb-10 relative z-10 font-light">"האדם אינו אלא תבנית נוף מולדתו"</p>
+
+                <!-- נר נשמה + תאריכים + ספירה לשלושים -->
+                <div class="memorial-block max-w-md mx-auto mb-12 relative z-10">
+                    <div class="memorial-candle" aria-hidden="true">
+                        <div class="candle">
+                            <div class="flame">
+                                <div class="flame-inner"></div>
+                            </div>
+                            <div class="wick"></div>
+                            <div class="wax"></div>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-stone-700 text-xl md:text-2xl font-medium">
+                        <span dir="ltr">9.3.1954</span>
+                        <span class="mx-2 text-amber-700">—</span>
+                        <span dir="ltr">26.4.2026</span>
+                    </div>
+                    <div id="shloshim-countdown" class="mt-5 inline-block bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 text-stone-700">
+                        <p class="text-sm uppercase tracking-wide text-amber-700 mb-1">לקראת השלושים</p>
+                        <p class="text-2xl font-bold" id="shloshim-days">—</p>
+                        <p class="text-sm text-stone-500 mt-1">25.5.2026</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6 text-xl md:text-2xl text-right leading-relaxed text-stone-700 max-w-3xl mx-auto relative z-10">
+                    <p>
+                        אבא היה עמוד התווך של המשפחה שלנו. אדם של אנשים, של חיוך רחב ושל לב ענק שרואים בכל תמונה שלו.
+                    </p>
+                    <p>
+                        הוא אהב את החיים, אהב לארח, ותמיד ידע להפוך כל ארוחה פשוטה לחגיגה של טעמים – במיוחד כשהיה מדובר בבשר טוב על האש או במקלובה המפורסמת שלו.
+                    </p>
+                    <p class="pt-8 font-semibold text-stone-500 italic text-center">
+                        אוהבים ומתגעגעים, המשפחה
+                    </p>
+                </div>
+            </article>
+
+        </main>
+    </div>
+
+    <!-- כפתור מעבר מהיר -->
+    <div class="text-center mb-16">
+        <a href="/gallery" class="inline-flex items-center gap-2 bg-stone-800 text-white px-8 py-4 rounded-full text-xl font-medium hover:bg-amber-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            לגלריית התמונות 📸
+        </a>
+    </div>
+
+    <footer class="py-10 text-center text-stone-500 bg-white/80 backdrop-blur border-t border-stone-200">
+        <p class="text-lg">מונצח באהבה על ידי המשפחה 🤍</p>
+    </footer>
+
+    <!-- נגן רקע - שיר של אלביס פרסלי -->
+    <div id="bg-music-player" class="bg-music-player" aria-label="נגן מוזיקת רקע">
+        <audio id="bg-audio" loop preload="none">
+            <source src="/audio/elvis.mp3" type="audio/mpeg">
+        </audio>
+        <button id="bg-music-toggle" type="button" class="bg-music-btn" aria-pressed="false" title="הפעלה / השתקה של מוזיקת רקע">
+            <span id="bg-music-icon" aria-hidden="true">🎵</span>
+            <span id="bg-music-label">נגן שיר רקע</span>
+        </button>
+    </div>
+
+    <script>
+        (function() {
+            const SHLOSHIM = new Date('2026-05-25T00:00:00+03:00');
+            const el = document.getElementById('shloshim-days');
+            if (el) {
+                const startOfDay = (d) => { const c = new Date(d); c.setHours(0,0,0,0); return c; };
+                const update = () => {
+                    const now = startOfDay(new Date());
+                    const target = startOfDay(SHLOSHIM);
+                    const ms = target - now;
+                    const days = Math.round(ms / 86400000);
+                    if (days > 1) el.textContent = `עוד ${days} ימים`;
+                    else if (days === 1) el.textContent = 'עוד יום אחד';
+                    else if (days === 0) el.textContent = 'היום';
+                    else if (days === -1) el.textContent = 'עבר יום אחד';
+                    else el.textContent = `עברו ${Math.abs(days)} ימים`;
+                };
+                update();
+                setInterval(update, 60 * 60 * 1000);
+            }
+
+            const audio = document.getElementById('bg-audio');
+            const btn = document.getElementById('bg-music-toggle');
+            const icon = document.getElementById('bg-music-icon');
+            const label = document.getElementById('bg-music-label');
+            if (audio && btn) {
+                audio.volume = 0.4;
+                const setState = (playing) => {
+                    btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+                    icon.textContent = playing ? '🔇' : '🎵';
+                    label.textContent = playing ? 'השתקה' : 'נגן שיר רקע';
+                };
+                btn.addEventListener('click', async () => {
+                    try {
+                        if (audio.paused) { await audio.play(); setState(true); }
+                        else { audio.pause(); setState(false); }
+                    } catch (err) {
+                        label.textContent = 'לא ניתן לנגן';
+                    }
+                });
+                audio.addEventListener('ended', () => setState(false));
+            }
+        })();
+    </script>
+
+</body>
+</html>

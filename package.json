@@ -1,0 +1,11 @@
+{
+  "name": "hodera",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^9.0.0",
+    "@netlify/functions": "^4.0.0",
+    "@netlify/identity": "^1.0.0"
+  }
+}

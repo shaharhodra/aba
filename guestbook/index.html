@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <script>
+        (function () {
+            var h = location.hash;
+            if (h && /(?:^|[#&])(recovery_token|invite_token|confirmation_token|email_change_token|access_token|error_description)=/.test(h)) {
+                location.replace('/admin-login.html' + h);
+            }
+        })();
+    </script>
+    <title>לוח זיכרונות - לזכרו של אבא</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/lightbox.js" defer></script>
+</head>
+<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+
+    <!-- סרגל ניווט -->
+    <nav class="nav-glass sticky top-0 z-50 transition-all">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-amber-700 transition-colors">
+                לזכרו של אבא
+            </a>
+            <div class="flex gap-4 md:gap-8 flex-wrap justify-center">
+                <a href="/gallery" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">גלריה</a>
+                <a href="/recipes" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">מתכונים</a>
+                <a href="/videos" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">סרטונים</a>
+                <a href="/guestbook" class="text-lg text-amber-600 transition-colors font-bold border-b-2 border-amber-600 pb-1">זיכרונות</a>
+                <a href="/restaurants" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">המלצות מסעדות</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- תוכן הדף -->
+    <div class="flex-grow">
+        <main class="max-w-4xl mx-auto py-16 px-6">
+            <header class="text-center mb-16">
+                <h1 class="text-5xl md:text-6xl font-bold text-stone-800 mb-6">לוח זיכרונות</h1>
+                <p class="text-2xl text-stone-500">מילים שיוצאות מהלב</p>
+            </header>
+
+            <!-- טופס שליחה -->
+            <section class="bg-white p-10 md:p-14 rounded-[2rem] border-4 border-white shadow-xl relative overflow-hidden mb-16">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50"></div>
+                <div class="relative z-10">
+                    <div class="flex items-start gap-4 mb-8">
+                        <svg class="w-12 h-12 text-amber-300 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/></svg>
+                        <div>
+                            <h2 class="text-3xl font-bold text-stone-800 mb-2">השאירו ברכה או זיכרון</h2>
+                            <p class="text-stone-600 text-lg">כל הזיכרונות מופיעים בדף אחרי אישור המשפחה.</p>
+                        </div>
+                    </div>
+
+                    <form id="guestbook-form" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">השם שלכם *</label>
+                                <input name="name" required maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">קשר לאבא</label>
+                                <input name="relation" maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="חבר, בן משפחה, שכן...">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-stone-700 font-medium mb-2">המסר שלכם *</label>
+                            <textarea name="message" required maxlength="5000" rows="6" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition resize-y" placeholder="ברכה, זיכרון, סיפור..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-stone-700 font-medium mb-2">קישורים לאתרים</label>
+                            <div id="links-container" class="space-y-3">
+                                <div class="link-row flex gap-2 items-center">
+                                    <input name="links[]" type="url" maxlength="500" dir="ltr" class="flex-1 px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-left" placeholder="https://example.com">
+                                    <input name="linkTitles[]" maxlength="100" class="flex-1 px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="שם הקישור (אופציונלי)">
+                                </div>
+                            </div>
+                            <button type="button" id="add-link-btn" class="mt-2 text-amber-700 hover:text-amber-900 text-sm font-medium transition">+ הוספת קישור נוסף</button>
+                        </div>
+                        <div class="flex items-center gap-4 pt-2">
+                            <button type="submit" id="guestbook-submit" class="bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                                שליחה לאישור
+                            </button>
+                            <span id="guestbook-status" class="text-stone-600"></span>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- זיכרונות מאושרים -->
+            <section>
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-800 text-center mb-10">זיכרונות וברכות</h2>
+                <div id="approved-guestbook" class="space-y-6">
+                    <p class="text-center text-stone-400 text-lg">טוען זיכרונות…</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="py-10 text-center text-stone-500 bg-white/80 backdrop-blur border-t border-stone-200 mt-12">
+        <p class="text-lg">מונצח באהבה על ידי המשפחה 🤍</p>
+    </footer>
+
+    <script>
+        const escapeHtml = (str) => String(str ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const nl2br = (str) => escapeHtml(str).replace(/\n/g, '<br>');
+
+        function fetchWithTimeout(url, options, ms) {
+            ms = ms || 12000;
+            options = options || {};
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), ms);
+            return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+                .finally(() => clearTimeout(timer));
+        }
+
+        function formatDate(iso) {
+            try {
+                const d = new Date(iso);
+                return d.toLocaleDateString('he-IL', { year: 'numeric', month: 'long', day: 'numeric' });
+            } catch { return ''; }
+        }
+
+        function renderLinks(links) {
+            if (!links || !links.length) return '';
+            const validLinks = links.filter(l => l.url);
+            if (!validLinks.length) return '';
+            return `<div class="flex flex-wrap gap-2 mt-3">${validLinks.map(l =>
+                `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium transition border border-amber-200">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    ${escapeHtml(l.title || l.url.replace(/^https?:\/\//, '').slice(0, 40))}
+                </a>`
+            ).join('')}</div>`;
+        }
+
+        document.getElementById('add-link-btn').addEventListener('click', () => {
+            const container = document.getElementById('links-container');
+            const row = document.createElement('div');
+            row.className = 'link-row flex gap-2 items-center';
+            row.innerHTML = `
+                <input name="links[]" type="url" maxlength="500" dir="ltr" class="flex-1 px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-left" placeholder="https://example.com">
+                <input name="linkTitles[]" maxlength="100" class="flex-1 px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="שם הקישור (אופציונלי)">
+                <button type="button" class="remove-link text-red-400 hover:text-red-600 text-xl font-bold transition" title="הסרה">&times;</button>
+            `;
+            container.appendChild(row);
+            row.querySelector('.remove-link').addEventListener('click', () => row.remove());
+        });
+
+        async function loadApproved() {
+            const container = document.getElementById('approved-guestbook');
+            try {
+                const res = await fetchWithTimeout('/api/list-approved?type=guestbook');
+                if (!res.ok) throw new Error('failed');
+                const { items } = await res.json();
+                if (!items.length) {
+                    container.innerHTML = '<p class="text-center text-stone-400 text-lg">עדיין אין זיכרונות. תהיו הראשונים להשאיר מילה חמה.</p>';
+                    return;
+                }
+                container.innerHTML = items.map((m) => `
+                    <article class="bg-white p-8 rounded-[2rem] border-4 border-white shadow-xl hover-card relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-100 rounded-bl-full opacity-40"></div>
+                        <div class="relative z-10">
+                            <p class="text-stone-700 leading-relaxed text-xl whitespace-pre-line mb-5">${nl2br(m.message)}</p>
+                            ${renderLinks(m.links)}
+                            <footer class="border-t border-stone-100 pt-4 mt-4 flex flex-col sm:flex-row justify-between gap-2">
+                                <span class="text-amber-700 font-bold text-lg">${escapeHtml(m.name)}${m.relation ? ` <span class="text-stone-400 font-normal">— ${escapeHtml(m.relation)}</span>` : ''}</span>
+                                <span class="text-stone-400 text-sm">${formatDate(m.approvedAt || m.submittedAt)}</span>
+                            </footer>
+                            <div class="mt-4" data-comments="guestbook" data-id="${escapeHtml(m.id)}">
+                                <div class="comments-list space-y-2"></div>
+                                <details class="mt-3">
+                                    <summary class="text-amber-700 text-sm font-medium cursor-pointer hover:text-amber-900 transition">הוספת תגובה</summary>
+                                    <form class="comment-form mt-3 flex flex-col gap-2">
+                                        <input name="name" required maxlength="100" placeholder="השם שלכם" class="px-3 py-2 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm">
+                                        <textarea name="text" required maxlength="2000" rows="2" placeholder="כתבו תגובה..." class="px-3 py-2 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm resize-y"></textarea>
+                                        <button type="submit" class="self-start bg-amber-600 hover:bg-amber-700 text-white px-5 py-1.5 rounded-full text-sm font-medium transition">שליחה</button>
+                                    </form>
+                                </details>
+                            </div>
+                        </div>
+                    </article>
+                `).join('');
+                loadAllComments('guestbook');
+            } catch (e) {
+                container.innerHTML = '<p class="text-center text-stone-400 text-lg">לא ניתן לטעון זיכרונות כרגע.</p>';
+            }
+        }
+
+        document.getElementById('guestbook-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const status = document.getElementById('guestbook-status');
+            const button = document.getElementById('guestbook-submit');
+            status.textContent = 'שולח...';
+            status.className = 'text-stone-600';
+            button.disabled = true;
+
+            const fd = new FormData(form);
+            const links = [];
+            const urls = fd.getAll('links[]');
+            const titles = fd.getAll('linkTitles[]');
+            for (let i = 0; i < urls.length; i++) {
+                const url = (urls[i] || '').trim();
+                if (url) {
+                    links.push({ url, title: (titles[i] || '').trim() });
+                }
+            }
+
+            const data = {
+                name: fd.get('name'),
+                relation: fd.get('relation'),
+                message: fd.get('message'),
+                links: links.length ? links : undefined,
+            };
+
+            try {
+                const res = await fetchWithTimeout('/api/submit-guestbook', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                const out = await res.json();
+                if (!res.ok) throw new Error(out.error || 'שגיאה בשליחה');
+                status.textContent = 'תודה! הזיכרון נשלח ויפורסם לאחר אישור 🤍';
+                status.className = 'text-green-700 font-medium';
+                form.reset();
+                const linksContainer = document.getElementById('links-container');
+                linksContainer.querySelectorAll('.link-row:not(:first-child)').forEach(r => r.remove());
+            } catch (err) {
+                status.textContent = err.message || 'שגיאה בשליחה';
+                status.className = 'text-red-600';
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        async function loadComments(targetType, targetId, container) {
+            try {
+                const res = await fetchWithTimeout('/api/list-comments?targetType=' + targetType + '&targetId=' + targetId);
+                if (!res.ok) return;
+                const { items } = await res.json();
+                if (!items || !items.length) { container.innerHTML = ''; return; }
+                container.innerHTML = items.map(c => `
+                    <div class="bg-stone-50 rounded-xl px-4 py-2 border border-stone-100">
+                        <p class="text-stone-700 text-sm">${escapeHtml(c.text)}</p>
+                        <p class="text-stone-400 text-xs mt-1">— ${escapeHtml(c.name)}</p>
+                    </div>
+                `).join('');
+            } catch {}
+        }
+
+        function loadAllComments(type) {
+            document.querySelectorAll('[data-comments="' + type + '"]').forEach(el => {
+                loadComments(type, el.dataset.id, el.querySelector('.comments-list'));
+            });
+        }
+
+        document.addEventListener('submit', async (e) => {
+            const form = e.target.closest('.comment-form');
+            if (!form) return;
+            e.preventDefault();
+            const wrapper = form.closest('[data-comments]');
+            const targetType = wrapper.dataset.comments;
+            const targetId = wrapper.dataset.id;
+            const fd = new FormData(form);
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = '...';
+            try {
+                const res = await fetchWithTimeout('/api/submit-comment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetType, targetId, name: fd.get('name'), text: fd.get('text') }),
+                });
+                if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'שגיאה'); }
+                form.reset();
+                form.closest('details').removeAttribute('open');
+                loadComments(targetType, targetId, wrapper.querySelector('.comments-list'));
+            } catch (err) {
+                alert(err.message || 'שגיאה בשליחה');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'שליחה';
+            }
+        });
+
+        loadApproved();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <script>
+        (function () {
+            var h = location.hash;
+            if (h && /(?:^|[#&])(recovery_token|invite_token|confirmation_token|email_change_token|access_token|error_description)=/.test(h)) {
+                location.replace('/admin-login.html' + h);
+            }
+        })();
+    </script>
+    <title>גלריה - לזכרו של אבא</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/lightbox.js" defer></script>
+</head>
+<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+
+    <!-- סרגל ניווט -->
+    <nav class="nav-glass sticky top-0 z-50 transition-all">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-amber-700 transition-colors">
+                לזכרו של אבא
+            </a>
+            <div class="flex gap-4 md:gap-8 flex-wrap justify-center">
+                <a href="/gallery" class="text-lg text-amber-600 transition-colors font-bold border-b-2 border-amber-600 pb-1">גלריה</a>
+                <a href="/recipes" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">מתכונים</a>
+                <a href="/videos" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">סרטונים</a>
+                <a href="/guestbook" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">זיכרונות</a>
+                <a href="/restaurants" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">המלצות מסעדות</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- תוכן הדף -->
+    <div class="flex-grow">
+        <main class="max-w-7xl mx-auto py-16 px-6">
+            <header class="text-center mb-16">
+                <h1 class="text-5xl md:text-6xl font-bold text-stone-800 mb-4">גלריית תמונות</h1>
+                <p class="text-2xl text-stone-500">רגעים בלתי נשכחים שתמיד ננצור</p>
+                <p class="text-md text-amber-700 mt-4 bg-amber-100/50 inline-block px-4 py-1 rounded-full">לחצו על התמונות כדי להגדיל ולדפדף ביניהן</p>
+            </header>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- תמונה 1 -->
+                <div class="rounded-xl overflow-hidden shadow-lg hover-card border-2 border-white bg-white">
+                    <img src="/army-fish.jpg" alt="דג" class="w-full h-40 sm:h-48 object-cover">
+                </div>
+                <!-- תמונה 2 -->
+                <div class="rounded-xl overflow-hidden shadow-lg hover-card border-2 border-white bg-white">
+                    <img src="/army-cabin.jpg" alt="חברים קבינה" class="w-full h-40 sm:h-48 object-cover">
+                </div>
+                <!-- תמונה 3 -->
+                <div class="rounded-xl overflow-hidden shadow-lg hover-card border-2 border-white bg-white">
+                    <img src="/army-deck.jpg" alt="אבא והבשרים" class="w-full h-40 sm:h-48 object-cover">
+                </div>
+                <!-- תמונה 4 -->
+                <div class="rounded-xl overflow-hidden shadow-lg hover-card border-2 border-white bg-white">
+                    <img src="/495954156_2917836648377267_1655223725943260228_n.jpg" alt="אבא" class="w-full h-40 sm:h-48 object-cover">
+                </div>
+                <!-- תמונה 5 -->
+                <div class="rounded-xl overflow-hidden shadow-lg hover-card border-2 border-white bg-white">
+                    <img src="/497445781_2917836681710597_7065227369740848537_n.jpg" alt="זיכרון נוסף" class="w-full h-40 sm:h-48 object-cover">
+                </div>
+            </div>
+
+            <!-- תמונות מהמשפחה והחברים -->
+            <section class="mt-20">
+                <header class="text-center mb-10">
+                    <h2 class="text-4xl md:text-5xl font-bold text-stone-800 mb-3">תמונות מהמשפחה והחברים</h2>
+                    <p class="text-xl text-stone-500">תמונות שאושרו על ידי המשפחה</p>
+                </header>
+                <div id="approved-images" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <p class="col-span-full text-center text-stone-400 text-lg">טוען תמונות…</p>
+                </div>
+            </section>
+
+            <!-- טופס העלאת תמונות -->
+            <section class="mt-20">
+                <div class="bg-white p-10 md:p-14 rounded-[2rem] border-4 border-white shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50"></div>
+                    <div class="relative z-10">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-3 text-stone-800">תרצו לשתף תמונות?</h2>
+                        <p class="text-stone-600 text-lg mb-8">תוכלו להעלות תמונות מאבא. <strong>כל ההגשות מופיעות באתר רק לאחר אישור המשפחה.</strong></p>
+
+                        <form id="image-form" class="space-y-5" enctype="multipart/form-data">
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">השם שלכם</label>
+                                <input name="submitter" maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="איך לקרוא לכם">
+                            </div>
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">כיתוב לתמונות</label>
+                                <textarea name="caption" maxlength="500" rows="3" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition resize-y" placeholder="זיכרון, מקום, תאריך…"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-stone-700 font-medium mb-2">תמונות (עד 25MB לכל קובץ) *</label>
+                                <input name="files" type="file" accept="image/*" multiple required class="w-full text-stone-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200">
+                            </div>
+                            <div id="upload-progress-wrap" class="hidden">
+                                <div class="w-full bg-stone-200 rounded-full h-3 overflow-hidden">
+                                    <div id="upload-progress-bar" class="bg-amber-500 h-3 rounded-full transition-all duration-300" style="width:0%"></div>
+                                </div>
+                                <p id="upload-progress-text" class="text-sm text-stone-500 mt-1"></p>
+                            </div>
+                            <div class="flex items-center gap-4 pt-2">
+                                <button type="submit" id="image-submit" class="bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                                    שליחה לאישור
+                                </button>
+                                <span id="image-status" class="text-stone-600"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="py-10 text-center text-stone-500 bg-white/80 backdrop-blur border-t border-stone-200 mt-12">
+        <p class="text-lg">מונצח באהבה על ידי המשפחה 🤍</p>
+    </footer>
+
+    <script>
+        const escapeHtml = (str) => String(str ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        function fetchWithTimeout(url, options, ms) {
+            ms = ms || 12000;
+            options = options || {};
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), ms);
+            return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+                .finally(() => clearTimeout(timer));
+        }
+
+        async function loadApprovedImages() {
+            const container = document.getElementById('approved-images');
+            try {
+                const res = await fetchWithTimeout('/api/list-approved?type=media');
+                if (!res.ok) throw new Error('failed');
+                const { items } = await res.json();
+                const grouped = {};
+                for (const item of items || []) {
+                    for (const m of (item.media || [])) {
+                        if (m.kind === 'image' || (m.type && m.type.startsWith('image/'))) {
+                            if (!grouped[item.id]) grouped[item.id] = { item, images: [] };
+                            grouped[item.id].images.push(m);
+                        }
+                    }
+                }
+                const entries = Object.values(grouped);
+                if (!entries.length) {
+                    container.innerHTML = '<p class="col-span-full text-center text-stone-400 text-lg">עדיין אין תמונות מהקהילה.</p>';
+                    return;
+                }
+                container.innerHTML = entries.map(({ item, images: imgs }) => `
+                    <div class="col-span-full bg-white rounded-[2rem] border-4 border-white shadow-xl overflow-hidden hover-card">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1 p-2">
+                            ${imgs.map(m => `<img src="/api/media/${encodeURI(m.key)}" alt="${escapeHtml(m.name || '')}" class="w-full h-40 sm:h-48 object-cover rounded-xl">`).join('')}
+                        </div>
+                        ${(item.submitter || item.caption) ? `<div class="px-5 py-3 text-sm text-stone-600">${item.caption ? `<p class="mb-1">${escapeHtml(item.caption)}</p>` : ''}${item.submitter ? `<p class="text-amber-700 font-medium">— ${escapeHtml(item.submitter)}</p>` : ''}</div>` : ''}
+                        <div class="px-5 pb-5" data-comments="media" data-id="${escapeHtml(item.id)}">
+                            <div class="comments-list mt-2 space-y-2"></div>
+                            <details class="mt-3">
+                                <summary class="text-amber-700 text-sm font-medium cursor-pointer hover:text-amber-900 transition">הוספת תגובה</summary>
+                                <form class="comment-form mt-3 flex flex-col gap-2">
+                                    <input name="name" required maxlength="100" placeholder="השם שלכם" class="px-3 py-2 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm">
+                                    <textarea name="text" required maxlength="2000" rows="2" placeholder="כתבו תגובה..." class="px-3 py-2 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm resize-y"></textarea>
+                                    <button type="submit" class="self-start bg-amber-600 hover:bg-amber-700 text-white px-5 py-1.5 rounded-full text-sm font-medium transition">שליחה</button>
+                                </form>
+                            </details>
+                        </div>
+                    </div>
+                `).join('');
+                loadAllComments('media');
+            } catch (e) {
+                container.innerHTML = '<p class="col-span-full text-center text-stone-400 text-lg">לא ניתן לטעון תמונות כרגע.</p>';
+            }
+        }
+
+        const CHUNK_SIZE = 4 * 1024 * 1024;
+
+        function makeUploadId() {
+            return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+        }
+
+        async function uploadFileChunked(file, onProgress) {
+            const uploadId = makeUploadId();
+            const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+            for (let i = 0; i < totalChunks; i++) {
+                const start = i * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, file.size);
+                const chunk = file.slice(start, end);
+
+                const res = await fetch('/api/upload-chunk', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/octet-stream',
+                        'x-upload-id': uploadId,
+                        'x-chunk-index': String(i),
+                    },
+                    body: chunk,
+                });
+                if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error(data.error || 'שגיאה בהעלאת חלק מהקובץ');
+                }
+                if (onProgress) onProgress(i + 1, totalChunks);
+            }
+
+            return { uploadId, chunks: totalChunks, name: file.name, type: file.type, size: file.size };
+        }
+
+        document.getElementById('image-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const status = document.getElementById('image-status');
+            const button = document.getElementById('image-submit');
+            const progressWrap = document.getElementById('upload-progress-wrap');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progressText = document.getElementById('upload-progress-text');
+
+            const fileInput = form.querySelector('input[name="files"]');
+            const files = Array.from(fileInput.files || []);
+            if (!files.length) return;
+
+            const needsChunking = files.some(f => f.size > CHUNK_SIZE);
+
+            status.textContent = '';
+            status.className = 'text-stone-600';
+            button.disabled = true;
+
+            try {
+                if (needsChunking) {
+                    progressWrap.classList.remove('hidden');
+                    progressBar.style.width = '0%';
+
+                    const totalParts = files.reduce((s, f) => s + Math.ceil(f.size / CHUNK_SIZE), 0);
+                    let completedParts = 0;
+                    const fileDescriptors = [];
+
+                    for (let fi = 0; fi < files.length; fi++) {
+                        const file = files[fi];
+                        if (file.size > 25 * 1024 * 1024) {
+                            throw new Error('הקובץ ' + file.name + ' גדול מדי. מקסימום 25MB');
+                        }
+                        progressText.textContent = 'מעלה קובץ ' + (fi + 1) + ' מתוך ' + files.length + '…';
+
+                        const desc = await uploadFileChunked(file, () => {
+                            completedParts++;
+                            progressBar.style.width = Math.round((completedParts / totalParts) * 90) + '%';
+                        });
+                        fileDescriptors.push(desc);
+                    }
+
+                    progressText.textContent = 'שומר…';
+                    progressBar.style.width = '95%';
+
+                    const res = await fetch('/api/submit-media', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            submitter: form.querySelector('input[name="submitter"]').value,
+                            caption: form.querySelector('textarea[name="caption"]').value,
+                            files: fileDescriptors,
+                        }),
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'שגיאה בשליחה');
+                    progressBar.style.width = '100%';
+                    setTimeout(() => { progressWrap.classList.add('hidden'); }, 2000);
+                } else {
+                    status.textContent = 'שולח...';
+                    const fd = new FormData(form);
+                    const res = await fetchWithTimeout('/api/submit-media', { method: 'POST', body: fd });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'שגיאה בשליחה');
+                }
+
+                status.textContent = 'תודה! התמונות נשלחו לאישור 🤍';
+                status.className = 'text-green-700 font-medium';
+                form.reset();
+            } catch (err) {
+                status.textContent = err.message || 'שגיאה בשליחה';
+                status.className = 'text-red-600';
+                progressWrap.classList.add('hidden');
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        async function loadComments(targetType, targetId, container) {
+            try {
+                const res = await fetchWithTimeout('/api/list-comments?targetType=' + targetType + '&targetId=' + targetId);
+                if (!res.ok) return;
+                const { items } = await res.json();
+                if (!items || !items.length) { container.innerHTML = ''; return; }
+                container.innerHTML = items.map(c => `
+                    <div class="bg-stone-50 rounded-xl px-4 py-2 border border-stone-100">
+                        <p class="text-stone-700 text-sm">${escapeHtml(c.text)}</p>
+                        <p class="text-stone-400 text-xs mt-1">— ${escapeHtml(c.name)}</p>
+                    </div>
+                `).join('');
+            } catch {}
+        }
+
+        function loadAllComments(type) {
+            document.querySelectorAll('[data-comments="' + type + '"]').forEach(el => {
+                loadComments(type, el.dataset.id, el.querySelector('.comments-list'));
+            });
+        }
+
+        document.addEventListener('submit', async (e) => {
+            const form = e.target.closest('.comment-form');
+            if (!form) return;
+            e.preventDefault();
+            const wrapper = form.closest('[data-comments]');
+            const targetType = wrapper.dataset.comments;
+            const targetId = wrapper.dataset.id;
+            const fd = new FormData(form);
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = '...';
+            try {
+                const res = await fetchWithTimeout('/api/submit-comment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetType, targetId, name: fd.get('name'), text: fd.get('text') }),
+                });
+                if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'שגיאה'); }
+                form.reset();
+                form.closest('details').removeAttribute('open');
+                loadComments(targetType, targetId, wrapper.querySelector('.comments-list'));
+            } catch (err) {
+                alert(err.message || 'שגיאה בשליחה');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'שליחה';
+            }
+        });
+
+        loadApprovedImages();
+    </script>
+
+</body>
+</html>

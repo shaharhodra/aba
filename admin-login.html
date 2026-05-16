@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <title>כניסת ניהול - לזכרו של אבא</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="modulepreload" href="https://esm.sh/@netlify/identity@1">
+</head>
+<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+    <main class="flex-grow flex items-center justify-center px-6 py-16">
+        <div class="bg-white p-10 md:p-12 rounded-[2rem] border-4 border-white shadow-xl max-w-md w-full relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50"></div>
+            <div class="relative z-10">
+                <h1 id="title" class="text-3xl font-bold text-stone-800 mb-2">כניסת ניהול</h1>
+                <p id="subtitle" class="text-stone-600 mb-8">רק משתמשים מורשים יכולים להיכנס ולאשר תכנים.</p>
+
+                <p id="status-message" class="hidden mb-4 px-4 py-3 rounded-xl text-sm"></p>
+
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-2">אימייל</label>
+                        <input id="email" type="email" required class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-2">סיסמה</label>
+                        <input id="password" type="password" required class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                        כניסה
+                    </button>
+                    <p id="login-error" class="text-red-600 text-sm hidden"></p>
+                    <p class="text-center text-sm">
+                        <a href="#" id="forgot-link" class="text-amber-700 hover:text-amber-900">שכחתי סיסמה</a>
+                    </p>
+                </form>
+
+                <form id="forgot-form" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-2">אימייל</label>
+                        <input id="forgot-email" type="email" required class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                        שלח קישור איפוס
+                    </button>
+                    <p id="forgot-error" class="text-red-600 text-sm hidden"></p>
+                    <p class="text-center text-sm">
+                        <a href="#" id="back-to-login" class="text-amber-700 hover:text-amber-900">חזרה לכניסה</a>
+                    </p>
+                </form>
+
+                <form id="set-password-form" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-2">סיסמה חדשה</label>
+                        <input id="new-password" type="password" required minlength="8" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-700 font-medium mb-2">אימות סיסמה</label>
+                        <input id="confirm-password" type="password" required minlength="8" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                        שמור סיסמה
+                    </button>
+                    <p id="set-password-error" class="text-red-600 text-sm hidden"></p>
+                </form>
+
+                <p class="text-center text-stone-400 text-sm mt-8">
+                    <a href="/" class="hover:text-amber-700">חזרה לאתר</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import {
+            login,
+            getUser,
+            requestPasswordRecovery,
+            acceptInvite,
+            updateUser,
+            handleAuthCallback,
+            AuthError,
+            MissingIdentityError,
+        } from 'https://esm.sh/@netlify/identity@1';
+
+        const titleEl = document.getElementById('title');
+        const subtitleEl = document.getElementById('subtitle');
+        const statusEl = document.getElementById('status-message');
+        const loginForm = document.getElementById('login-form');
+        const forgotForm = document.getElementById('forgot-form');
+        const setPasswordForm = document.getElementById('set-password-form');
+        const loginErrorEl = document.getElementById('login-error');
+        const forgotErrorEl = document.getElementById('forgot-error');
+        const setPasswordErrorEl = document.getElementById('set-password-error');
+
+        let pendingMode = null; // 'invite' | 'recovery'
+        let pendingInviteToken = null;
+
+        function showStatus(text, kind = 'info') {
+            statusEl.textContent = text;
+            statusEl.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'bg-amber-50', 'text-amber-800', 'bg-red-50', 'text-red-700');
+            if (kind === 'success') statusEl.classList.add('bg-green-50', 'text-green-700');
+            else if (kind === 'error') statusEl.classList.add('bg-red-50', 'text-red-700');
+            else statusEl.classList.add('bg-amber-50', 'text-amber-800');
+        }
+
+        function hideStatus() {
+            statusEl.classList.add('hidden');
+        }
+
+        function showOnly(formEl) {
+            for (const f of [loginForm, forgotForm, setPasswordForm]) {
+                f.classList.toggle('hidden', f !== formEl);
+            }
+        }
+
+        function showInviteUI() {
+            titleEl.textContent = 'קבלת הזמנה';
+            subtitleEl.textContent = 'בחר סיסמה כדי להשלים את ההצטרפות.';
+            showOnly(setPasswordForm);
+        }
+
+        function showRecoveryUI() {
+            titleEl.textContent = 'איפוס סיסמה';
+            subtitleEl.textContent = 'בחר סיסמה חדשה לחשבון שלך.';
+            showOnly(setPasswordForm);
+        }
+
+        async function init() {
+            try {
+                const callback = await handleAuthCallback();
+                if (callback) {
+                    if (callback.type === 'invite') {
+                        pendingMode = 'invite';
+                        pendingInviteToken = callback.token;
+                        showInviteUI();
+                        return;
+                    }
+                    if (callback.type === 'recovery') {
+                        pendingMode = 'recovery';
+                        showRecoveryUI();
+                        return;
+                    }
+                    if (callback.type === 'confirmation') {
+                        showStatus('האימייל אומת. אפשר להיכנס.', 'success');
+                    }
+                }
+            } catch (err) {
+                if (err instanceof MissingIdentityError) {
+                    showStatus('שירות הזיהוי לא מופעל באתר עדיין. נסה שוב לאחר הדיפלוי.', 'error');
+                    return;
+                }
+                if (err instanceof AuthError) {
+                    showStatus('הקישור פג תוקף או לא תקף. בקש קישור חדש.', 'error');
+                } else {
+                    showStatus('שגיאה בעיבוד הקישור.', 'error');
+                }
+            }
+
+            const existing = await getUser();
+            if (existing) {
+                const roles = existing.roles || [];
+                if (roles.includes('admin')) {
+                    window.location.href = '/admin/';
+                    return;
+                }
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginErrorEl.classList.add('hidden');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const user = await login(email, password);
+                const roles = user.roles || [];
+                if (!roles.includes('admin')) {
+                    loginErrorEl.textContent = 'המשתמש שלך אינו מנהל. פנה למשפחה.';
+                    loginErrorEl.classList.remove('hidden');
+                    return;
+                }
+                window.location.href = '/admin/';
+            } catch (err) {
+                if (err instanceof MissingIdentityError) {
+                    loginErrorEl.textContent = 'שירות הזיהוי לא מופעל באתר.';
+                } else if (err instanceof AuthError) {
+                    loginErrorEl.textContent = err.status === 401 ? 'אימייל או סיסמה שגויים' : err.message;
+                } else {
+                    loginErrorEl.textContent = 'שגיאה בכניסה';
+                }
+                loginErrorEl.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('forgot-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            hideStatus();
+            forgotErrorEl.classList.add('hidden');
+            titleEl.textContent = 'איפוס סיסמה';
+            subtitleEl.textContent = 'הזן את האימייל שלך ונשלח קישור לאיפוס סיסמה.';
+            const emailVal = document.getElementById('email').value.trim();
+            if (emailVal) document.getElementById('forgot-email').value = emailVal;
+            showOnly(forgotForm);
+        });
+
+        document.getElementById('back-to-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotErrorEl.classList.add('hidden');
+            hideStatus();
+            titleEl.textContent = 'כניסת ניהול';
+            subtitleEl.textContent = 'רק משתמשים מורשים יכולים להיכנס ולאשר תכנים.';
+            showOnly(loginForm);
+        });
+
+        forgotForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            forgotErrorEl.classList.add('hidden');
+            const email = document.getElementById('forgot-email').value.trim();
+            try {
+                await requestPasswordRecovery(email);
+                showStatus('שלחנו קישור איפוס לאימייל. בדוק את תיבת הדואר (וגם את התיקייה "דואר זבל").', 'success');
+                titleEl.textContent = 'כניסת ניהול';
+                subtitleEl.textContent = 'רק משתמשים מורשים יכולים להיכנס ולאשר תכנים.';
+                showOnly(loginForm);
+            } catch (err) {
+                if (err instanceof MissingIdentityError) {
+                    forgotErrorEl.textContent = 'שירות הזיהוי לא מופעל באתר.';
+                } else if (err instanceof AuthError) {
+                    forgotErrorEl.textContent = err.status === 404 ? 'לא נמצא משתמש עם האימייל הזה.' : err.message;
+                } else {
+                    forgotErrorEl.textContent = 'שגיאה בשליחת הקישור';
+                }
+                forgotErrorEl.classList.remove('hidden');
+            }
+        });
+
+        setPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            setPasswordErrorEl.classList.add('hidden');
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            if (newPassword !== confirmPassword) {
+                setPasswordErrorEl.textContent = 'הסיסמאות לא תואמות.';
+                setPasswordErrorEl.classList.remove('hidden');
+                return;
+            }
+            try {
+                if (pendingMode === 'invite') {
+                    await acceptInvite(pendingInviteToken, newPassword);
+                } else if (pendingMode === 'recovery') {
+                    await updateUser({ password: newPassword });
+                } else {
+                    setPasswordErrorEl.textContent = 'מצב לא תקף. רענן את הדף.';
+                    setPasswordErrorEl.classList.remove('hidden');
+                    return;
+                }
+                showStatus('הסיסמה נשמרה. אפשר להיכנס עכשיו.', 'success');
+                titleEl.textContent = 'כניסת ניהול';
+                subtitleEl.textContent = 'רק משתמשים מורשים יכולים להיכנס ולאשר תכנים.';
+                pendingMode = null;
+                pendingInviteToken = null;
+                showOnly(loginForm);
+            } catch (err) {
+                if (err instanceof AuthError) {
+                    setPasswordErrorEl.textContent = err.status === 422 ? 'סיסמה חלשה מדי. בחר סיסמה חזקה יותר.' : err.message;
+                } else {
+                    setPasswordErrorEl.textContent = 'שגיאה בשמירת הסיסמה.';
+                }
+                setPasswordErrorEl.classList.remove('hidden');
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
