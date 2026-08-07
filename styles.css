@@ -1,18 +1,206 @@
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap');
 
-body {
-    font-family: 'Heebo', sans-serif;
+/* ==========================================================================
+   ערכת עיצוב כהה — "ליל זיכרון"
+   רקע כהה וחמים, זוהר צבעוני עדין, וצבע הדגשה משלו לכל עמוד.
+   הצבעים של Tailwind מוגדרים מחדש ב-/theme.js
+   ========================================================================== */
+
+:root {
+    color-scheme: dark;
+
+    --canvas: #100c0b;
+    --canvas-deep: #0a0807;
+    --surface: #1b1614;
+    --surface-raised: #221b18;
+    --hair: #332a25;
+
+    --gold: #f0c674;
+    --gold-deep: #b98a34;
+
+    --text: #f6f0e8;
+    --text-soft: #e0d5c8;
+    --text-muted: #a8998c;
+
+    /* צבע ההדגשה של העמוד — נדרס לפי data-accent שעל ה-body */
+    --accent: #f0c674;
+    --accent-2: #d98f4a;
+    --accent-glow: rgba(240, 198, 116, 0.28);
+    --accent-veil: rgba(240, 198, 116, 0.10);
 }
 
-/* Lightbox styles */
+/* צבע לכל אזור באתר — כך הניווט, הכרטיסים והכותרות מקבלים זהות משלהם */
+body[data-accent='gallery']     { --accent: #ef8fa6; --accent-2: #c9566f; --accent-glow: rgba(239, 143, 166, 0.30); --accent-veil: rgba(239, 143, 166, 0.11); }
+body[data-accent='recipes']     { --accent: #ef8354; --accent-2: #c2451f; --accent-glow: rgba(239, 131, 84, 0.30);  --accent-veil: rgba(239, 131, 84, 0.11); }
+body[data-accent='videos']      { --accent: #a99bf0; --accent-2: #6f5fc4; --accent-glow: rgba(169, 155, 240, 0.30); --accent-veil: rgba(169, 155, 240, 0.11); }
+body[data-accent='guestbook']   { --accent: #5fcfc0; --accent-2: #2f9c92; --accent-glow: rgba(95, 207, 192, 0.30);  --accent-veil: rgba(95, 207, 192, 0.11); }
+body[data-accent='restaurants'] { --accent: #9ed17a; --accent-2: #5f9c46; --accent-glow: rgba(158, 209, 122, 0.30); --accent-veil: rgba(158, 209, 122, 0.11); }
+body[data-accent='admin']       { --accent: #8fb4e8; --accent-2: #4f7bb8; --accent-glow: rgba(143, 180, 232, 0.30); --accent-veil: rgba(143, 180, 232, 0.11); }
+
+html {
+    background-color: var(--canvas);
+}
+
+/*
+ * ה-body נשאר שקוף בכוונה: צבע הרקע יושב על תגית ה-html,
+ * וכך שכבות הזוהר (body::before / body::after) נצבעות מעליו ולא מוסתרות.
+ */
+body {
+    font-family: 'Assistant', 'Heebo', sans-serif;
+    background-color: transparent;
+    color: var(--text-soft);
+    position: relative;
+}
+
+h1, h2, h3, .font-display {
+    font-family: 'Frank Ruhl Libre', 'Assistant', serif;
+    letter-spacing: -0.01em;
+}
+
+strong { color: var(--gold); font-weight: 600; }
+
+::selection { background: var(--accent); color: #14100e; }
+
+/* --- זוהר הרקע: שכבת אור צבעונית רכה מאחורי כל התוכן --- */
+body::before {
+    content: '';
+    position: fixed;
+    inset: -20vh -10vw;
+    z-index: -2;
+    pointer-events: none;
+    background:
+        radial-gradient(38rem 30rem at 82% -4%, var(--accent-veil), transparent 68%),
+        radial-gradient(34rem 28rem at 8% 12%, rgba(240, 198, 116, 0.10), transparent 66%),
+        radial-gradient(46rem 34rem at 50% 108%, rgba(87, 132, 160, 0.12), transparent 70%),
+        radial-gradient(30rem 26rem at 96% 78%, rgba(201, 86, 111, 0.09), transparent 68%);
+}
+
+/* גרעיניות עדינה שמונעת מהרקע להיראות "שטוח" */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.32;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* דוגמת רקע דקורטיבית (נשמר שם המחלקה הקיים) */
+.bg-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f0c674' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --- כותרות עם מעבר צבע --- */
+.title-grad {
+    background-image: linear-gradient(105deg, var(--text) 8%, var(--accent) 52%, var(--accent-2) 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-bottom: 0.08em;
+}
+
+/* --- סרגל ניווט --- */
+/* גיבוי ל-text-accent / border-accent, למקרה ש-Tailwind לא מייצר אותם */
+.text-accent { color: var(--accent); }
+.border-accent { border-color: var(--accent); }
+.hover\:text-accent:hover { color: var(--accent); }
+.hover\:border-accent:hover { border-color: var(--accent); }
+
+.nav-glass {
+    background: linear-gradient(180deg, rgba(22, 17, 15, 0.92), rgba(16, 12, 11, 0.78));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--hair);
+    position: relative;
+}
+.nav-glass::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--gold), transparent);
+    opacity: 0.7;
+}
+
+/* --- כרטיסים --- */
+.hover-card {
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    box-shadow: 0 18px 44px -24px rgba(0, 0, 0, 0.9);
+}
+.hover-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent-glow);
+    box-shadow: 0 26px 60px -26px rgba(0, 0, 0, 0.95), 0 0 0 1px var(--accent-veil), 0 14px 46px -30px var(--accent-glow);
+}
+
+/* פינה צבעונית דקורטיבית בראש הכרטיס */
+.accent-blob {
+    background: radial-gradient(circle at 100% 0, var(--accent-glow), transparent 72%);
+}
+
+/* הילה צבעונית מאחורי התמונה הראשית */
+.hero-glow {
+    background: linear-gradient(115deg, #f0c674, #ef8354 34%, #c9566f 62%, #6f5fc4 100%);
+}
+
+/* --- כפתור ראשי --- */
+button.btn-primary, a.btn-primary {
+    background-image: linear-gradient(135deg, var(--accent-2), #a8460f 78%);
+    color: #fff;
+    box-shadow: 0 12px 30px -14px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+button.btn-primary:hover:not(:disabled), a.btn-primary:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+    box-shadow: 0 16px 36px -14px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+button.btn-primary:disabled {
+    background-image: none;
+    box-shadow: none;
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* --- שדות טופס --- */
+input, textarea, select {
+    color: var(--text);
+    caret-color: var(--accent);
+}
+input::placeholder, textarea::placeholder { color: #7d7066; }
+input:focus, textarea:focus, select:focus {
+    box-shadow: 0 0 0 3px var(--accent-veil);
+}
+select {
+    color-scheme: dark;
+}
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+
+/* --- מדיה --- */
+video { background: #000; }
+
+.clickable-image {
+    cursor: zoom-in;
+    transition: transform 0.4s ease, filter 0.4s ease;
+}
+.clickable-image:hover {
+    transform: scale(1.03);
+    filter: brightness(1.08) saturate(1.06);
+}
+
+/* --- Lightbox --- */
 .lightbox {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(8, 6, 5, 0.92);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,7 +219,7 @@ body {
     max-width: 90vw;
     max-height: 90vh;
     border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--accent-veil);
     transform: scale(0.95);
     transition: transform 0.3s ease;
     object-fit: contain;
@@ -45,27 +233,28 @@ body {
     position: absolute;
     top: 20px;
     right: 30px;
-    color: white;
+    color: var(--text);
     font-size: 50px;
     cursor: pointer;
     background: none;
     border: none;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     line-height: 1;
     padding: 0 10px;
     z-index: 10;
+    transition: color 0.2s ease;
 }
+.lightbox-close:hover { color: var(--accent); }
 
 .lightbox-prev,
 .lightbox-next {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    color: white;
+    color: var(--text);
     font-size: 56px;
     cursor: pointer;
-    background: rgba(0,0,0,0.25);
-    border: none;
+    background: rgba(27, 22, 20, 0.7);
+    border: 1px solid var(--hair);
     border-radius: 50%;
     width: 56px;
     height: 56px;
@@ -73,13 +262,15 @@ body {
     align-items: center;
     justify-content: center;
     line-height: 1;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     z-index: 10;
     -webkit-tap-highlight-color: transparent;
 }
 .lightbox-prev:hover,
 .lightbox-next:hover {
-    background: rgba(0,0,0,0.5);
+    background: rgba(27, 22, 20, 0.95);
+    border-color: var(--accent);
+    color: var(--accent);
 }
 .lightbox-prev {
     right: 16px;
@@ -93,51 +284,34 @@ body {
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    color: rgba(255,255,255,0.8);
+    color: var(--text-muted);
     font-size: 16px;
     font-weight: 500;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    letter-spacing: 0.06em;
     z-index: 10;
 }
 
-.clickable-image {
-    cursor: zoom-in;
-    transition: transform 0.4s ease, filter 0.4s ease;
-}
-
-.clickable-image:hover {
-    transform: scale(1.03);
-    filter: brightness(1.05);
-}
-
-/* Glassmorphism for nav */
-.nav-glass {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* Card hover */
-.hover-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.hover-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-}
-
-/* Decorative background */
-.bg-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4c5b0' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-
-/* Memorial candle */
+/* --- נר נשמה --- */
 .memorial-block { text-align: center; }
 .memorial-candle {
     display: flex;
     justify-content: center;
     align-items: flex-end;
     height: 130px;
+    position: relative;
+}
+/* הילה חמה סביב הנר — בולטת במיוחד על הרקע הכהה */
+.memorial-candle::before {
+    content: '';
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    width: 260px;
+    height: 260px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(255, 178, 74, 0.20) 0%, rgba(255, 150, 50, 0.08) 42%, transparent 68%);
+    pointer-events: none;
+    animation: haloBreathe 4s ease-in-out infinite alternate;
 }
 .memorial-candle .candle {
     position: relative;
@@ -150,9 +324,9 @@ body {
     left: 0;
     right: 0;
     height: 80px;
-    background: linear-gradient(180deg, #f5e8d0 0%, #e9d2a3 50%, #c9a675 100%);
+    background: linear-gradient(180deg, #f7ead2 0%, #e2c797 50%, #9c7b4e 100%);
     border-radius: 6px 6px 4px 4px;
-    box-shadow: inset 0 -6px 12px rgba(0,0,0,0.15);
+    box-shadow: inset 0 -6px 12px rgba(0, 0, 0, 0.35), 0 0 22px rgba(255, 176, 80, 0.18);
 }
 .memorial-candle .wick {
     position: absolute;
@@ -173,7 +347,7 @@ body {
     transform: translateX(-50%);
     background: radial-gradient(ellipse at 50% 80%, #ffeb99 0%, #ffb347 45%, #ff7e3a 75%, rgba(255,126,58,0) 100%);
     border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-    box-shadow: 0 0 24px 6px rgba(255, 170, 60, 0.55), 0 0 60px 14px rgba(255, 200, 90, 0.35);
+    box-shadow: 0 0 34px 10px rgba(255, 170, 60, 0.6), 0 0 80px 22px rgba(255, 200, 90, 0.3);
     animation: flameFlicker 1.6s ease-in-out infinite alternate;
     transform-origin: 50% 100%;
 }
@@ -194,11 +368,26 @@ body {
     50%  { transform: translateX(-50%) scale(1.05, 0.95) rotate(1deg); opacity: 1; }
     100% { transform: translateX(-50%) scale(0.96, 1.06) rotate(-2deg); opacity: 0.9; }
 }
-@media (prefers-reduced-motion: reduce) {
-    .memorial-candle .flame, .memorial-candle .flame-inner { animation: none; }
+@keyframes haloBreathe {
+    from { opacity: 0.75; transform: translateX(-50%) scale(0.96); }
+    to   { opacity: 1;    transform: translateX(-50%) scale(1.04); }
 }
 
-/* Background music floating button */
+/* --- כניסת התוכן לעמוד --- */
+@keyframes riseIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+}
+main > * {
+    animation: riseIn 0.75s cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+main > *:nth-child(1) { animation-delay: 0.05s; }
+main > *:nth-child(2) { animation-delay: 0.14s; }
+main > *:nth-child(3) { animation-delay: 0.23s; }
+main > *:nth-child(4) { animation-delay: 0.32s; }
+main > *:nth-child(n + 5) { animation-delay: 0.4s; }
+
+/* --- נגן מוזיקת רקע --- */
 .bg-music-player {
     position: fixed;
     bottom: 20px;
@@ -209,24 +398,46 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(27, 22, 20, 0.86);
     backdrop-filter: blur(10px);
-    color: #44403c;
-    border: 1px solid rgba(217, 119, 6, 0.3);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-soft);
+    border: 1px solid var(--hair);
     padding: 10px 16px;
     border-radius: 999px;
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-    transition: background 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.6);
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .bg-music-btn:hover {
-    background: #fff7ed;
+    background: rgba(38, 30, 26, 0.95);
+    border-color: var(--accent);
+    color: var(--text);
     transform: translateY(-1px);
 }
 .bg-music-btn[aria-pressed="true"] {
-    background: #fef3c7;
-    border-color: #d97706;
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.6), 0 0 22px -6px rgba(240, 198, 116, 0.45);
+}
+
+/* --- פס גלילה --- */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--canvas-deep); }
+::-webkit-scrollbar-thumb {
+    background: #3a302b;
+    border: 3px solid var(--canvas-deep);
+    border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gold-deep); }
+
+@media (prefers-reduced-motion: reduce) {
+    .memorial-candle .flame,
+    .memorial-candle .flame-inner,
+    .memorial-candle::before { animation: none; }
+    main > * { animation: none; }
+    .hover-card:hover { transform: none; }
 }

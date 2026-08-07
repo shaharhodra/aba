@@ -13,22 +13,23 @@
     <title>המלצות מסעדות - לזכרו של יצחק חודרה הגדול</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/theme.js"></script>
     <link rel="stylesheet" href="/styles.css">
     <script src="/bg-music.js" defer></script>
 </head>
-<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+<body data-accent="restaurants" class="text-stone-800 min-h-screen flex flex-col bg-pattern">
 
     <nav class="nav-glass sticky top-0 z-50 transition-all">
         <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-amber-700 transition-colors">
+            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-gold-300 transition-colors">
                 לזכרו של יצחק חודרה הגדול
             </a>
             <div class="flex gap-4 md:gap-8 flex-wrap justify-center">
-                <a href="/gallery" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">גלריה</a>
-                <a href="/recipes" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">מתכונים</a>
-                <a href="/videos" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">סרטונים</a>
-                <a href="/guestbook" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">זיכרונות</a>
-                <a href="/restaurants" class="text-lg text-amber-600 transition-colors font-bold border-b-2 border-amber-600 pb-1">המלצות מסעדות</a>
+                <a href="/gallery" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">גלריה</a>
+                <a href="/recipes" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">מתכונים</a>
+                <a href="/videos" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">סרטונים</a>
+                <a href="/guestbook" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">זיכרונות</a>
+                <a href="/restaurants" class="text-lg text-accent transition-colors font-bold border-b-2 border-accent pb-1">המלצות מסעדות</a>
             </div>
         </div>
     </nav>
@@ -36,16 +37,16 @@
     <div class="flex-grow">
         <main class="max-w-5xl mx-auto py-16 px-6">
             <header class="text-center mb-16">
-                <h1 class="text-5xl md:text-6xl font-bold text-stone-800 mb-4">המלצות מסעדות</h1>
+                <h1 class="title-grad text-5xl md:text-6xl font-bold text-stone-800 mb-4">המלצות מסעדות</h1>
                 <p class="text-2xl text-stone-500">המקומות האהובים שאבא אהב ושאנחנו ממליצים</p>
             </header>
 
             <!-- סינון לפי ארץ/עיר -->
             <div class="flex flex-wrap justify-center gap-3 mb-10">
-                <select id="filter-country" class="px-5 py-3 rounded-full border border-stone-200 bg-white text-stone-700 font-medium shadow focus:border-amber-400 focus:outline-none transition">
+                <select id="filter-country" class="px-5 py-3 rounded-full border border-stone-200 bg-surface text-stone-700 font-medium shadow focus:border-gold-400 focus:outline-none transition">
                     <option value="">כל הארצות</option>
                 </select>
-                <select id="filter-city" class="px-5 py-3 rounded-full border border-stone-200 bg-white text-stone-700 font-medium shadow focus:border-amber-400 focus:outline-none transition">
+                <select id="filter-city" class="px-5 py-3 rounded-full border border-stone-200 bg-surface text-stone-700 font-medium shadow focus:border-gold-400 focus:outline-none transition">
                     <option value="">כל הערים</option>
                 </select>
             </div>
@@ -57,8 +58,8 @@
 
             <!-- טופס שליחת המלצה -->
             <section class="mt-20">
-                <div class="bg-white p-10 md:p-14 rounded-[2rem] border-4 border-white shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50"></div>
+                <div class="bg-surface p-10 md:p-14 rounded-[2rem] border-4 border-hair shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 accent-blob rounded-bl-full opacity-50"></div>
                     <div class="relative z-10">
                         <h2 class="text-3xl md:text-4xl font-bold mb-3 text-stone-800">תרצו להמליץ על מסעדה?</h2>
                         <p class="text-stone-600 text-lg mb-8">שתפו מסעדה שאהבתם. <strong>כל ההמלצות מופיעות באתר רק לאחר אישור המשפחה.</strong></p>
@@ -67,43 +68,43 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-2">שם המסעדה *</label>
-                                    <input name="restaurantName" required maxlength="200" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="שם המסעדה">
+                                    <input name="restaurantName" required maxlength="200" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition" placeholder="שם המסעדה">
                                 </div>
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-2">השם שלכם</label>
-                                    <input name="submitter" maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="איך לקרוא לכם">
+                                    <input name="submitter" maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition" placeholder="איך לקרוא לכם">
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-2">ארץ *</label>
-                                    <input name="country" required maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="למשל: ישראל">
+                                    <input name="country" required maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition" placeholder="למשל: ישראל">
                                 </div>
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-2">עיר *</label>
-                                    <input name="city" required maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="למשל: חדרה">
+                                    <input name="city" required maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition" placeholder="למשל: חדרה">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-stone-700 font-medium mb-2">מיקום / כתובת</label>
-                                <input name="location" maxlength="300" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="כתובת או תיאור מיקום">
+                                <input name="location" maxlength="300" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition" placeholder="כתובת או תיאור מיקום">
                             </div>
                             <div>
                                 <label class="block text-stone-700 font-medium mb-2">קישור לאתר / מפה</label>
-                                <input name="link" type="url" maxlength="500" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-left" placeholder="https://...">
+                                <input name="link" type="url" maxlength="500" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition text-left" placeholder="https://...">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-2">מנה מומלצת</label>
-                                    <input name="dish" maxlength="200" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="שם המנה">
+                                    <input name="dish" maxlength="200" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition" placeholder="שם המנה">
                                 </div>
                                 <div>
                                     <label class="block text-stone-700 font-medium mb-2">על המנה</label>
-                                    <textarea name="dishDescription" maxlength="1000" rows="3" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition resize-y" placeholder="למה דווקא את המנה הזו?"></textarea>
+                                    <textarea name="dishDescription" maxlength="1000" rows="3" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition resize-y" placeholder="למה דווקא את המנה הזו?"></textarea>
                                 </div>
                             </div>
                             <div class="flex items-center gap-4 pt-2">
-                                <button type="submit" id="restaurant-submit" class="bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                                <button type="submit" id="restaurant-submit" class="btn-primary disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
                                     שליחה לאישור
                                 </button>
                                 <span id="restaurant-status" class="text-stone-600"></span>
@@ -115,7 +116,7 @@
         </main>
     </div>
 
-    <footer class="py-10 text-center text-stone-500 bg-white/80 backdrop-blur border-t border-stone-200 mt-12">
+    <footer class="py-10 text-center text-stone-500 bg-surface/80 backdrop-blur border-t border-stone-200 mt-12">
         <p class="text-lg">מונצח באהבה על ידי המשפחה</p>
     </footer>
 
@@ -140,15 +141,15 @@
                 return;
             }
             container.innerHTML = items.map(r => `
-                <article class="bg-white p-8 rounded-[2rem] border-4 border-white shadow-xl hover-card relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-amber-100 rounded-bl-full opacity-40"></div>
+                <article class="bg-surface p-8 rounded-[2rem] border-4 border-hair shadow-xl hover-card relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 accent-blob rounded-bl-full opacity-40"></div>
                     <div class="relative z-10">
                         <h3 class="text-2xl font-bold text-stone-800 mb-1">${escapeHtml(r.restaurantName)}</h3>
-                        <p class="text-amber-700 font-medium mb-3">
+                        <p class="text-gold-300 font-medium mb-3">
                             <span>${escapeHtml(r.city)}</span>, <span>${escapeHtml(r.country)}</span>
                         </p>
                         ${r.location ? `<p class="text-stone-600 text-sm mb-2"><span class="inline-block w-4 h-4 align-text-bottom mr-1"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4 inline"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span> ${escapeHtml(r.location)}</p>` : ''}
-                        ${r.link ? `<a href="${escapeHtml(r.link)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium transition border border-amber-200 mb-3"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg> לאתר / מפה</a>` : ''}
+                        ${r.link ? `<a href="${escapeHtml(r.link)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-gold-900 hover:bg-gold-800 text-gold-200 px-3 py-1.5 rounded-full text-sm font-medium transition border border-gold-500 mb-3"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg> לאתר / מפה</a>` : ''}
                         ${r.dish ? `<div class="mt-3 bg-stone-50 p-4 rounded-2xl border border-stone-100"><p class="font-bold text-stone-800 mb-1">מנה מומלצת: ${escapeHtml(r.dish)}</p>${r.dishDescription ? `<p class="text-stone-600 text-sm">${escapeHtml(r.dishDescription)}</p>` : ''}</div>` : ''}
                         <p class="text-stone-400 text-xs mt-3">הומלץ ע״י ${escapeHtml(r.submitter || 'אנונימי')}</p>
                     </div>
@@ -235,11 +236,11 @@
                 const out = await res.json();
                 if (!res.ok) throw new Error(out.error || 'שגיאה בשליחה');
                 status.textContent = 'תודה! ההמלצה נשלחה לאישור ותפורסם בקרוב';
-                status.className = 'text-green-700 font-medium';
+                status.className = 'text-emerald-300 font-medium';
                 form.reset();
             } catch (err) {
                 status.textContent = err.message || 'שגיאה בשליחה';
-                status.className = 'text-red-600';
+                status.className = 'text-rose-300';
             } finally {
                 button.disabled = false;
             }

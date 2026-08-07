@@ -5,31 +5,32 @@
     <title>ניהול הגשות - לזכרו של יצחק חודרה הגדול</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/theme.js"></script>
     <link rel="stylesheet" href="/styles.css">
 </head>
-<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+<body data-accent="admin" class="text-stone-800 min-h-screen flex flex-col bg-pattern">
     <nav class="nav-glass sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center gap-4">
-            <a href="/" class="text-2xl font-bold text-stone-800 hover:text-amber-700 transition-colors">לזכרו של יצחק חודרה הגדול</a>
+            <a href="/" class="text-2xl font-bold text-stone-800 hover:text-gold-300 transition-colors">לזכרו של יצחק חודרה הגדול</a>
             <div class="flex items-center gap-4">
                 <span id="user-email" class="text-stone-600 text-sm hidden sm:inline"></span>
-                <button id="logout-btn" class="text-amber-700 hover:text-amber-900 font-medium">התנתקות</button>
+                <button id="logout-btn" class="text-gold-300 hover:text-gold-100 font-medium">התנתקות</button>
             </div>
         </div>
     </nav>
 
     <main class="flex-grow max-w-6xl mx-auto py-12 px-6 w-full">
         <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-stone-800 mb-3">ניהול הגשות</h1>
+            <h1 class="title-grad text-4xl md:text-5xl font-bold text-stone-800 mb-3">ניהול הגשות</h1>
             <p class="text-stone-500 text-lg">כל מה שנשלח ממתין לאישור שלך לפני שיופיע באתר</p>
         </header>
 
         <div class="flex justify-center gap-3 mb-10 flex-wrap">
-            <button data-tab="recipe" class="tab-btn px-6 py-3 rounded-full bg-amber-600 text-white font-medium shadow">מתכונים</button>
-            <button data-tab="guestbook" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">זיכרונות</button>
-            <button data-tab="media" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">תמונות וסרטונים</button>
-            <button data-tab="restaurant" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">מסעדות</button>
-            <button data-tab="approved" class="tab-btn px-6 py-3 rounded-full bg-white text-stone-700 font-medium shadow">מאושרים</button>
+            <button data-tab="recipe" class="tab-btn px-6 py-3 rounded-full bg-ember-500 text-white font-medium shadow">מתכונים</button>
+            <button data-tab="guestbook" class="tab-btn px-6 py-3 rounded-full bg-surface text-stone-700 font-medium shadow">זיכרונות</button>
+            <button data-tab="media" class="tab-btn px-6 py-3 rounded-full bg-surface text-stone-700 font-medium shadow">תמונות וסרטונים</button>
+            <button data-tab="restaurant" class="tab-btn px-6 py-3 rounded-full bg-surface text-stone-700 font-medium shadow">מסעדות</button>
+            <button data-tab="approved" class="tab-btn px-6 py-3 rounded-full bg-surface text-stone-700 font-medium shadow">מאושרים</button>
         </div>
 
         <section id="content" class="space-y-6">
@@ -41,13 +42,13 @@
     <div id="edit-modal" class="fixed inset-0 z-[100] hidden">
         <div class="absolute inset-0 bg-black/50" id="edit-modal-backdrop"></div>
         <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative">
+            <div class="bg-surface rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative">
                 <button id="edit-modal-close" class="absolute top-4 left-4 text-stone-400 hover:text-stone-700 text-2xl">&times;</button>
                 <h2 class="text-2xl font-bold text-stone-800 mb-6">עריכת תוכן</h2>
                 <form id="edit-form" class="space-y-4">
                     <div id="edit-fields"></div>
                     <div class="flex gap-3 pt-4">
-                        <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-full font-medium transition">שמירה</button>
+                        <button type="submit" class="btn-primary text-white px-8 py-3 rounded-full font-medium transition">שמירה</button>
                         <button type="button" id="edit-cancel" class="bg-stone-200 hover:bg-stone-300 text-stone-700 px-8 py-3 rounded-full font-medium transition">ביטול</button>
                     </div>
                     <p id="edit-status" class="text-sm"></p>
@@ -86,7 +87,7 @@
                 const el = document.getElementById('toast');
                 const inner = el.firstElementChild;
                 inner.textContent = text;
-                inner.className = 'px-6 py-3 rounded-full shadow-lg font-medium text-sm ' + (ok !== false ? 'bg-green-600 text-white' : 'bg-red-500 text-white');
+                inner.className = 'px-6 py-3 rounded-full shadow-lg font-medium text-sm ' + (ok !== false ? 'bg-green-600 text-white' : 'bg-rose-500/100 text-white');
                 el.classList.remove('translate-y-4', 'opacity-0');
                 clearTimeout(el._t);
                 el._t = setTimeout(() => el.classList.add('translate-y-4', 'opacity-0'), 2500);
@@ -130,7 +131,7 @@
                 var valid = (arr || []).filter(function (l) { return l.url; });
                 if (!valid.length) return '';
                 return '<div class="flex flex-wrap gap-2 mt-3">' + valid.map(function (l) {
-                    return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium transition border border-amber-200">' +
+                    return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-gold-900 hover:bg-gold-800 text-gold-200 px-3 py-1.5 rounded-full text-sm font-medium transition border border-gold-500">' +
                         '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>' +
                         esc(l.title || l.url.replace(/^https?:\/\//, '').slice(0, 40)) +
                         '</a>';
@@ -143,7 +144,7 @@
                 if (!isApproved) {
                     html += '<button data-act="approve" data-type="' + esc(type) + '" data-id="' + esc(id) + '" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full text-sm font-medium transition">אישור</button>';
                 }
-                html += '<button data-act="reject" data-status="' + (isApproved ? 'approved' : 'pending') + '" data-type="' + esc(type) + '" data-id="' + esc(id) + '" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full text-sm font-medium transition">' + (isApproved ? 'מחיקה' : 'דחייה') + '</button>';
+                html += '<button data-act="reject" data-status="' + (isApproved ? 'approved' : 'pending') + '" data-type="' + esc(type) + '" data-id="' + esc(id) + '" class="bg-rose-500/100 hover:bg-red-600 text-white px-5 py-2 rounded-full text-sm font-medium transition">' + (isApproved ? 'מחיקה' : 'דחייה') + '</button>';
                 html += '</div>';
                 return html;
             }
@@ -152,11 +153,11 @@
                 var date = new Date(item.submittedAt).toLocaleString('he-IL');
 
                 if (kind === 'recipe') {
-                    return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                    return '<article class="bg-surface p-6 md:p-8 rounded-[2rem] border-4 border-hair shadow-xl">' +
                         '<div class="flex justify-between items-start gap-4 mb-3">' +
                             '<div class="min-w-0">' +
                                 '<h3 class="text-2xl font-bold text-stone-800">' + esc(item.title) + '</h3>' +
-                                '<p class="text-amber-700">מאת ' + esc(item.submitter || 'אנונימי') + ' &bull; ' + date + '</p>' +
+                                '<p class="text-gold-300">מאת ' + esc(item.submitter || 'אנונימי') + ' &bull; ' + date + '</p>' +
                             '</div>' +
                             actionBtns('recipe', item.id, isApproved) +
                         '</div>' +
@@ -167,11 +168,11 @@
                 }
 
                 if (kind === 'guestbook') {
-                    return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                    return '<article class="bg-surface p-6 md:p-8 rounded-[2rem] border-4 border-hair shadow-xl">' +
                         '<div class="flex justify-between items-start gap-4 mb-3">' +
                             '<div class="min-w-0">' +
                                 '<h3 class="text-xl font-bold text-stone-800">' + esc(item.name) + (item.relation ? ' <span class="text-stone-400 font-normal">&mdash; ' + esc(item.relation) + '</span>' : '') + '</h3>' +
-                                '<p class="text-amber-700 text-sm">' + date + '</p>' +
+                                '<p class="text-gold-300 text-sm">' + date + '</p>' +
                             '</div>' +
                             actionBtns('guestbook', item.id, isApproved) +
                         '</div>' +
@@ -182,25 +183,25 @@
                 }
 
                 if (kind === 'restaurant') {
-                    return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                    return '<article class="bg-surface p-6 md:p-8 rounded-[2rem] border-4 border-hair shadow-xl">' +
                         '<div class="flex justify-between items-start gap-4 mb-3">' +
                             '<div class="min-w-0">' +
                                 '<h3 class="text-2xl font-bold text-stone-800">' + esc(item.restaurantName) + '</h3>' +
-                                '<p class="text-amber-700">' + esc(item.city) + ', ' + esc(item.country) + ' &bull; מאת ' + esc(item.submitter || 'אנונימי') + ' &bull; ' + date + '</p>' +
+                                '<p class="text-gold-300">' + esc(item.city) + ', ' + esc(item.country) + ' &bull; מאת ' + esc(item.submitter || 'אנונימי') + ' &bull; ' + date + '</p>' +
                             '</div>' +
                             actionBtns('restaurant', item.id, isApproved) +
                         '</div>' +
                         (item.location ? '<p class="text-stone-600 text-sm mb-2">מיקום: ' + esc(item.location) + '</p>' : '') +
-                        (item.link ? '<a href="' + esc(item.link) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium transition border border-amber-200 mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg> קישור</a>' : '') +
+                        (item.link ? '<a href="' + esc(item.link) + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 bg-gold-900 hover:bg-gold-800 text-gold-200 px-3 py-1.5 rounded-full text-sm font-medium transition border border-gold-500 mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg> קישור</a>' : '') +
                         (item.dish ? '<div class="bg-stone-50 p-4 rounded-2xl border border-stone-100"><p class="font-bold text-stone-800">מנה מומלצת: ' + esc(item.dish) + '</p>' + (item.dishDescription ? '<p class="text-stone-600 text-sm mt-1">' + esc(item.dishDescription) + '</p>' : '') + '</div>' : '') +
                     '</article>';
                 }
 
-                return '<article class="bg-white p-6 md:p-8 rounded-[2rem] border-4 border-white shadow-xl">' +
+                return '<article class="bg-surface p-6 md:p-8 rounded-[2rem] border-4 border-hair shadow-xl">' +
                     '<div class="flex justify-between items-start gap-4 mb-3">' +
                         '<div class="min-w-0">' +
                             '<h3 class="text-xl font-bold text-stone-800">העלאה מאת ' + esc(item.submitter || 'אנונימי') + '</h3>' +
-                            '<p class="text-amber-700 text-sm">' + date + '</p>' +
+                            '<p class="text-gold-300 text-sm">' + date + '</p>' +
                         '</div>' +
                         actionBtns('media', item.id, isApproved) +
                     '</div>' +
@@ -225,7 +226,7 @@
                             items.map(c =>
                                 '<div class="flex items-start justify-between gap-2 bg-stone-50 rounded-xl px-3 py-2 border border-stone-100">' +
                                     '<div class="min-w-0"><p class="text-stone-700 text-sm">' + esc(c.text) + '</p><p class="text-stone-400 text-xs">— ' + esc(c.name) + '</p></div>' +
-                                    '<button data-act="delete-comment" data-target-type="' + esc(type) + '" data-target-id="' + esc(id) + '" data-comment-id="' + esc(c.id) + '" class="text-red-400 hover:text-red-600 text-xs font-medium flex-shrink-0 mt-1">מחיקה</button>' +
+                                    '<button data-act="delete-comment" data-target-type="' + esc(type) + '" data-target-id="' + esc(id) + '" data-comment-id="' + esc(c.id) + '" class="text-rose-400 hover:text-rose-300 text-xs font-medium flex-shrink-0 mt-1">מחיקה</button>' +
                                 '</div>'
                             ).join('');
                     } catch { section.innerHTML = ''; }
@@ -248,9 +249,9 @@
                     tag = tag || 'input';
                     extra = extra || '';
                     if (tag === 'textarea') {
-                        return '<div><label class="block text-stone-700 font-medium mb-1 text-sm">' + label + '</label><textarea name="' + name + '" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm" rows="4" ' + extra + '>' + esc(value || '') + '</textarea></div>';
+                        return '<div><label class="block text-stone-700 font-medium mb-1 text-sm">' + label + '</label><textarea name="' + name + '" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition text-sm" rows="4" ' + extra + '>' + esc(value || '') + '</textarea></div>';
                     }
-                    return '<div><label class="block text-stone-700 font-medium mb-1 text-sm">' + label + '</label><input name="' + name + '" value="' + esc(value || '') + '" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition text-sm" ' + extra + '></div>';
+                    return '<div><label class="block text-stone-700 font-medium mb-1 text-sm">' + label + '</label><input name="' + name + '" value="' + esc(value || '') + '" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition text-sm" ' + extra + '></div>';
                 }
 
                 if (type === 'recipe') {
@@ -309,7 +310,7 @@
                     load();
                 } catch (err) {
                     editStatus.textContent = err.message || 'שגיאה';
-                    editStatus.className = 'text-sm text-red-600';
+                    editStatus.className = 'text-sm text-rose-300';
                 }
             });
 
@@ -366,7 +367,7 @@
                     var msg = e.name === 'AbortError'
                         ? 'הבקשה לשרת נתקעה (timeout). בדקו את החיבור לאינטרנט ונסו שוב.'
                         : 'שגיאה בטעינה (' + (e.message || 'לא ידוע') + ').';
-                    content.innerHTML = '<div class="text-center py-4"><p class="text-red-600 mb-3">' + msg + '</p><button id="retry-btn" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-full font-medium transition">נסה שוב</button></div>';
+                    content.innerHTML = '<div class="text-center py-4"><p class="text-rose-300 mb-3">' + msg + '</p><button id="retry-btn" class="btn-primary text-white px-6 py-2 rounded-full font-medium transition">נסה שוב</button></div>';
                     document.getElementById('retry-btn').addEventListener('click', load);
                 }
             }
@@ -376,9 +377,9 @@
                     currentTab = btn.dataset.tab;
                     document.querySelectorAll('.tab-btn').forEach(function (b) {
                         var isActive = b === btn;
-                        b.classList.toggle('bg-amber-600', isActive);
+                        b.classList.toggle('bg-ember-500', isActive);
                         b.classList.toggle('text-white', isActive);
-                        b.classList.toggle('bg-white', !isActive);
+                        b.classList.toggle('bg-surface', !isActive);
                         b.classList.toggle('text-stone-700', !isActive);
                     });
                     load();
