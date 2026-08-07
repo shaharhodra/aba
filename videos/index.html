@@ -13,24 +13,25 @@
     <title>סרטונים - לזכרו של יצחק חודרה הגדול</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/theme.js"></script>
     <link rel="stylesheet" href="/styles.css">
     <script src="/lightbox.js" defer></script>
     <script src="/bg-music.js" defer></script>
 </head>
-<body class="bg-[#faf9f6] text-stone-800 min-h-screen flex flex-col bg-pattern">
+<body data-accent="videos" class="text-stone-800 min-h-screen flex flex-col bg-pattern">
 
     <!-- סרגל ניווט -->
     <nav class="nav-glass sticky top-0 z-50 transition-all">
         <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-amber-700 transition-colors">
+            <a href="/" class="text-3xl font-bold text-stone-800 tracking-tight hover:text-gold-300 transition-colors">
                 לזכרו של יצחק חודרה הגדול
             </a>
             <div class="flex gap-4 md:gap-8 flex-wrap justify-center">
-                <a href="/gallery" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">גלריה</a>
-                <a href="/recipes" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">מתכונים</a>
-                <a href="/videos" class="text-lg text-amber-600 transition-colors font-bold border-b-2 border-amber-600 pb-1">סרטונים</a>
-                <a href="/guestbook" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">זיכרונות</a>
-                <a href="/restaurants" class="text-lg hover:text-amber-600 transition-colors font-medium border-b-2 border-transparent hover:border-amber-600 pb-1">המלצות מסעדות</a>
+                <a href="/gallery" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">גלריה</a>
+                <a href="/recipes" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">מתכונים</a>
+                <a href="/videos" class="text-lg text-accent transition-colors font-bold border-b-2 border-accent pb-1">סרטונים</a>
+                <a href="/guestbook" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">זיכרונות</a>
+                <a href="/restaurants" class="text-lg hover:text-accent transition-colors font-medium border-b-2 border-transparent hover:border-accent pb-1">המלצות מסעדות</a>
             </div>
         </div>
     </nav>
@@ -39,7 +40,7 @@
     <div class="flex-grow">
         <main class="max-w-5xl mx-auto py-16 px-6">
             <header class="text-center mb-16">
-                <h1 class="text-5xl md:text-6xl font-bold text-stone-800 mb-4">סרטונים ורגעים</h1>
+                <h1 class="title-grad text-5xl md:text-6xl font-bold text-stone-800 mb-4">סרטונים ורגעים</h1>
                 <p class="text-2xl text-stone-500">סרטונים שאושרו על ידי המשפחה</p>
             </header>
 
@@ -49,8 +50,8 @@
 
             <!-- טופס העלאת סרטונים -->
             <section class="mt-20">
-                <div class="bg-white p-10 md:p-14 rounded-[2rem] border-4 border-white shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50"></div>
+                <div class="bg-surface p-10 md:p-14 rounded-[2rem] border-4 border-hair shadow-xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 accent-blob rounded-bl-full opacity-50"></div>
                     <div class="relative z-10">
                         <h2 class="text-3xl md:text-4xl font-bold mb-3 text-stone-800">תרצו לשתף סרטון?</h2>
                         <p class="text-stone-600 text-lg mb-8">תוכלו להעלות סרטונים מאבא. <strong>כל ההגשות מופיעות באתר רק לאחר אישור המשפחה.</strong></p>
@@ -58,24 +59,24 @@
                         <form id="video-form" class="space-y-5" enctype="multipart/form-data">
                             <div>
                                 <label class="block text-stone-700 font-medium mb-2">השם שלכם</label>
-                                <input name="submitter" maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition" placeholder="איך לקרוא לכם">
+                                <input name="submitter" maxlength="100" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition" placeholder="איך לקרוא לכם">
                             </div>
                             <div>
                                 <label class="block text-stone-700 font-medium mb-2">כיתוב לסרטונים</label>
-                                <textarea name="caption" maxlength="500" rows="3" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:border-amber-400 focus:outline-none transition resize-y" placeholder="זיכרון, מקום, תאריך…"></textarea>
+                                <textarea name="caption" maxlength="500" rows="3" class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-stone-50 focus:bg-stone-100 focus:border-gold-400 focus:outline-none transition resize-y" placeholder="זיכרון, מקום, תאריך…"></textarea>
                             </div>
                             <div>
                                 <label class="block text-stone-700 font-medium mb-2">סרטונים (עד 25MB לכל קובץ) *</label>
-                                <input name="files" type="file" accept="video/*" multiple required class="w-full text-stone-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200">
+                                <input name="files" type="file" accept="video/*" multiple required class="w-full text-stone-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-gold-900 file:text-gold-300 hover:file:bg-gold-800">
                             </div>
                             <div id="upload-progress-wrap" class="hidden">
                                 <div class="w-full bg-stone-200 rounded-full h-3 overflow-hidden">
-                                    <div id="upload-progress-bar" class="bg-amber-500 h-3 rounded-full transition-all duration-300" style="width:0%"></div>
+                                    <div id="upload-progress-bar" class="bg-gold-400 h-3 rounded-full transition-all duration-300" style="width:0%"></div>
                                 </div>
                                 <p id="upload-progress-text" class="text-sm text-stone-500 mt-1"></p>
                             </div>
                             <div class="flex items-center gap-4 pt-2">
-                                <button type="submit" id="video-submit" class="bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
+                                <button type="submit" id="video-submit" class="btn-primary disabled:bg-stone-300 text-white px-8 py-3 rounded-full text-lg font-medium transition shadow-lg">
                                     שליחה לאישור
                                 </button>
                                 <span id="video-status" class="text-stone-600"></span>
@@ -87,7 +88,7 @@
         </main>
     </div>
 
-    <footer class="py-10 text-center text-stone-500 bg-white/80 backdrop-blur border-t border-stone-200 mt-12">
+    <footer class="py-10 text-center text-stone-500 bg-surface/80 backdrop-blur border-t border-stone-200 mt-12">
         <p class="text-lg">מונצח באהבה על ידי המשפחה 🤍</p>
     </footer>
 
@@ -122,11 +123,11 @@
                     return;
                 }
                 container.innerHTML = videos.map(({ media, submitter, caption }) => `
-                    <div class="rounded-2xl overflow-hidden shadow-lg hover-card border-4 border-white bg-white">
-                        <video controls class="w-full bg-stone-900">
+                    <div class="rounded-2xl overflow-hidden shadow-lg hover-card border-4 border-hair bg-surface">
+                        <video controls class="w-full bg-black">
                             <source src="/api/media/${encodeURI(media.key)}" type="${escapeHtml(media.type || 'video/mp4')}">
                         </video>
-                        ${(submitter || caption) ? `<div class="p-4 text-sm text-stone-600">${caption ? `<p class="mb-1">${escapeHtml(caption)}</p>` : ''}${submitter ? `<p class="text-amber-700 font-medium">— ${escapeHtml(submitter)}</p>` : ''}</div>` : ''}
+                        ${(submitter || caption) ? `<div class="p-4 text-sm text-stone-600">${caption ? `<p class="mb-1">${escapeHtml(caption)}</p>` : ''}${submitter ? `<p class="text-gold-300 font-medium">— ${escapeHtml(submitter)}</p>` : ''}</div>` : ''}
                     </div>
                 `).join('');
             } catch (e) {
@@ -225,12 +226,12 @@
 
                 progressBar.style.width = '100%';
                 status.textContent = 'תודה! הסרטונים נשלחו לאישור 🤍';
-                status.className = 'text-green-700 font-medium';
+                status.className = 'text-emerald-300 font-medium';
                 form.reset();
                 setTimeout(() => { progressWrap.classList.add('hidden'); }, 2000);
             } catch (err) {
                 status.textContent = err.message || 'שגיאה בשליחה';
-                status.className = 'text-red-600';
+                status.className = 'text-rose-300';
                 progressWrap.classList.add('hidden');
             } finally {
                 button.disabled = false;
